@@ -69,10 +69,11 @@ const sessionOptions = {
   
 };
 
-// ✅ Home Route
-// app.get("/", (req, res) => {
-//   res.send("Wanderlust Home");
-// });
+
+app.get("/", (req, res) => {
+  res.redirect("/listings"); // or render a homepage
+});
+
 app.use(session(sessionOptions));
 app.use(flash());
 
