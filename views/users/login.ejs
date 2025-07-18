@@ -1,0 +1,83 @@
+<% layout("layouts/boilerplate") %>
+
+
+
+<style>
+  body {
+    background: linear-gradient(135deg, #74ebd5 0%, #ACB6E5 100%);
+    font-family: 'Segoe UI', sans-serif;
+  }
+
+  .login-card {
+    max-width: 420px;
+    margin: auto;
+    border-radius: 1rem;
+    background-color: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.15);
+    animation: fadeIn 0.6s ease-in-out;
+  }
+
+  .login-card h3 {
+    font-weight: 700;
+    color: #333;
+  }
+
+  .form-control:focus {
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+  }
+
+  .btn-primary {
+    background-color: #0069d9;
+    border: none;
+    transition: 0.3s ease;
+  }
+
+  .btn-primary:hover {
+    background-color: #0053ba;
+  }
+
+  .card-footer a {
+    color: #0069d9;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .card-footer a:hover {
+    text-decoration: underline;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+
+<!-- Login Card -->
+<div class="d-flex align-items-center justify-content-center min-vh-100 px-3">
+  <div class="card login-card p-4">
+    <div class="card-header bg-transparent text-center border-0">
+      <h3 class="mb-0">Welcome Back 👋</h3>
+      <small class="text-muted">Please login to your account</small>
+    </div>
+
+    <div class="card-body">
+      <form action="/login" method="POST" novalidate>
+        <div class="mb-3">
+          <label for="username" class="form-label fw-bold">Username</label>
+          <input type="text" name="username" class="form-control" id="username" placeholder="Enter username" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="password" class="form-label fw-bold">Password</label>
+          <input type="password" name="password" class="form-control" id="password" placeholder="Enter password" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 fw-bold">Login</button>
+      </form>
+    </div>
+
+    <div class="card-footer bg-transparent text-center border-0 mt-2">
+      <small class="text-muted">Don't have an account? <a href="/signup">Sign up</a></small>
+    </div>
+  </div>
+</div>

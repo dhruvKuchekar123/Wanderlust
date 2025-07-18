@@ -1,0 +1,86 @@
+<% layout("layouts/boilerplate") %>
+
+<style>
+  body {
+    background: linear-gradient(to right, #fddb92 0%, #d1fdff 100%);
+    font-family: 'Segoe UI', sans-serif;
+  }
+
+  .signup-card {
+    max-width: 450px;
+    margin: auto;
+    border-radius: 1rem;
+    background-color: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.15);
+    animation: slideIn 0.6s ease-in-out;
+  }
+
+  .signup-card h3 {
+    font-weight: 700;
+    color: #333;
+  }
+
+  .form-control:focus {
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  }
+
+  .btn-primary {
+    background-color: #007bff;
+    border: none;
+    transition: 0.3s ease;
+  }
+
+  .btn-primary:hover {
+    background-color: #0056b3;
+  }
+
+  .card-footer a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .card-footer a:hover {
+    text-decoration: underline;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+
+<!-- Signup Card -->
+<div class="d-flex align-items-center justify-content-center min-vh-100 px-3">
+  <div class="card signup-card p-4">
+    <div class="card-header bg-transparent text-center border-0">
+      <h3 class="mb-0">Signup on Wanderlust ✈️</h3>
+      <small class="text-muted">Create a free account</small>
+    </div>
+
+    <div class="card-body">
+      <form action="/signup" method="POST" novalidate>
+        <div class="mb-3">
+          <label for="username" class="form-label fw-bold">Username</label>
+          <input type="text" name="username" class="form-control" id="username" placeholder="Choose a username" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="email" class="form-label fw-bold">Email address</label>
+          <input type="email" name="email" class="form-control" id="email" placeholder="Enter your email" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="password" class="form-label fw-bold">Password</label>
+          <input type="password" name="password" class="form-control" id="password" placeholder="Create a password" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 fw-bold">Sign Up</button>
+      </form>
+    </div>
+
+    <div class="card-footer bg-transparent text-center border-0 mt-2">
+      <small class="text-muted">Already have an account? <a href="/login">Login here</a></small>
+    </div>
+  </div>
+</div>

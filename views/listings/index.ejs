@@ -1,0 +1,195 @@
+<% layout("layouts/boilerplate") %>
+
+<style>
+  /* Hide scrollbar across browsers */
+  .hide-scrollbar {
+    overflow-x: auto;
+    white-space: nowrap;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;             /* Chrome, Safari, Opera */
+  }
+
+  .icon-bar {
+    display: flex;
+    gap: 2rem;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    align-items: center;
+  }
+
+  .icon-item {
+    text-align: center;
+    flex: 0 0 auto;
+  }
+
+  .icon-item i {
+    font-size: 1.25rem;
+  }
+
+  .filter-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .total-tax {
+    font-weight: bold;
+    font-size: 1rem;
+  }
+
+  .filter-btn {
+    background-color: #ff385c;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: 0.2s;
+  }
+
+  .filter-btn:hover {
+    background-color: #e03150;
+  }
+</style>
+
+<!-- Category Icons Bar & Filter Button -->
+<div class="container-fluid py-3 px-4 border-bottom hide-scrollbar">
+  <div class="filter-section">
+    <div class="icon-bar">
+
+      <div class="icon-item">
+        <i class="fa-solid fa-umbrella-beach"></i><br>
+        <small>Beachfront</small>
+      </div>
+
+      <div class="icon-item">
+        <i class="fa-solid fa-mountain"></i><br>
+        <small>Cabins</small>
+      </div>
+
+      <div class="icon-item">
+        <i class="fa-solid fa-bolt"></i><br>
+        <small>OMG!</small>
+      </div>
+
+      <div class="icon-item">
+        <i class="fa-solid fa-house"></i><br>
+        <small>Tiny Homes</small>
+      </div>
+
+      <div class="icon-item">
+        <i class="fa-solid fa-tree"></i><br>
+        <small>Camping</small>
+      </div>
+
+      <div class="icon-item">
+        <i class="fa-solid fa-water"></i><br>
+        <small>Lakefront</small>
+      </div>
+
+      <div class="icon-item">
+        <i class="fa-solid fa-wind"></i><br>
+        <small>Desert</small>
+      </div>
+
+      <div class="icon-item">
+        <i class="fa-solid fa-city"></i><br>
+        <small>Urban</small>
+      </div>
+
+      <div class="icon-item">
+        <i class="fa-solid fa-person-hiking"></i><br>
+        <small>Hiking</small>
+      </div>
+
+      <div class="icon-item">
+        <i class="fa-solid fa-hotel"></i><br>
+        <small>Hotel</small>
+      </div>
+
+      <div class="icon-item">
+        <i class="fa-solid fa-igloo"></i><br>
+        <small>Arctic</small>
+      </div>
+
+      <div class="icon-item">
+        <i class="fa-solid fa-vihara"></i><br>
+        <small>Historical</small>
+      </div>
+
+      <div class="icon-item">
+        <i class="fa-solid fa-person-swimming"></i><br>
+        <small>Pools</small>
+      </div>
+
+      <div class="icon-item">
+        <i class="fa-solid fa-paw"></i><br>
+        <small>Pet Friendly</small>
+      </div>
+
+      <div class="icon-item">
+        <i class="fa-solid fa-sun"></i><br>
+        <small>Tropical</small>
+      </div>
+
+      <div class="icon-item">
+        <i class="fa-solid fa-campground"></i><br>
+        <small>Yurts</small>
+      </div>
+
+      <div class="icon-item">
+        <i class="fa-solid fa-ship"></i><br>
+        <small>Boats</small>
+      </div>
+
+      <div class="icon-item">
+        <i class="fa-solid fa-rocket"></i><br>
+        <small>Futuristic</small>
+      </div>
+
+      <div class="icon-item">
+        <i class="fa-solid fa-champagne-glasses"></i><br>
+        <small>Luxury</small>
+      </div>
+
+    </div>
+
+    <!-- Top Right Corner: Total After Taxes + Filter -->
+   
+      <button class="filter-btn" onclick="alert('Add filter logic here')">
+        <i class="fa-solid fa-filter"></i> Filter
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Listings Grid -->
+<div class="row row-cols-1 row-cols-md-3 g-4 mt-3">
+  <% for (let listing of allListings) { %>
+    <div class="col">
+      <a href="/listings/<%= listing._id %>" class="text-decoration-none text-dark">
+        <div class="card listing-card h-100 border-0 shadow-sm">
+          <div class="image-container rounded-top">
+            <img 
+              src="<%= listing.image.url %>" 
+              class="card-img-top rounded-top" 
+              alt="listing image"
+            >
+            <div class="overlay">
+              <span class="text-white fw-bold">View Details</span>
+            </div>
+          </div>
+          <div class="card-body rounded-bottom bg-white">
+            <h5 class="card-title fw-bold"><%= listing.title %></h5>
+            <p class="card-text">₹<%= listing.price.toLocaleString("en-IN") %>/night</p>
+          </div>
+        </div>
+      </a>
+    </div>
+  <% } %>
+</div>
