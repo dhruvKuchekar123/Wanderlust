@@ -3,7 +3,7 @@ Wanderlust is a full-stack web application that allows users to create, explore,
 
 🔗 Live Demo
 🚀 Click here to visit Wanderlust on Render
-(Replace with your actual deployed link)
+ https://wanderlust-1-ca6k.onrender.com/signup
 
 📌 Features
 🧾 User Authentication – Secure sign-up/login using Passport.js.
