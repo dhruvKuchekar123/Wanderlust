@@ -35,17 +35,7 @@ Deployment	Render
 
 Folder Structure:
 MyProject/
-│
-├── models/           # Mongoose models (Listing, Review, User)
-├── routes/           # Express route files
-├── controllers/      # Route logic handlers
-├── views/            # EJS templates
-├── public/           # Static assets (CSS, JS, images)
-├── uploads/          # Temp uploads (if applicable)
-├── middleware.js     # Custom middleware (auth, validation)
-├── schema.js         # Joi validation schemas
-├── app.js            # Main server file
-└── cloudconfig.js    # Cloudinary config
+<img width="1309" height="558" alt="image" src="https://github.com/user-attachments/assets/d01724c8-1f66-4086-8ddf-fb62b868ec3c" />
 
 🧠 Lessons Learned
 Built a modular and scalable Node.js/Express application.
