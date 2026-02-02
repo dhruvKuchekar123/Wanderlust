@@ -120,7 +120,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/listings", listingRouter);
-app.use("/reviews", reviewRouter); // 🔥 FIXED
+app.use("/listings/:id/reviews", reviewRouter); // 🔥 FIXED
 app.use("/", userRouter);
 
 // =======================
