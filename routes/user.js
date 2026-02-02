@@ -17,11 +17,12 @@ router.post("/signup", wrapAsync(userController.signup));
 router.get("/login", userController.renderLoginForm);
 
 // POST: Handle Login
-router.post('/login',
-  saveRedirectUrl, // middleware to store redirect path before passport auth
-  passport.authenticate('local', {
-    failureRedirect: '/login',
-    failureFlash: true
+router.post(
+  "/login",
+  saveRedirectUrl,
+  passport.authenticate("local", {
+    failureRedirect: "/login",
+    failureFlash: true,
   }),
   userController.login
 );
