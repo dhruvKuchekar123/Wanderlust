@@ -1,23 +1,55 @@
-<footer class="footer mt-auto border-top shadow-sm">
-  <div class="container f-info">
-    
-    <!-- Social Icons (centered) -->
-    <div class="f-info-socials">
-      <a href="#"><i class="fa-brands fa-square-facebook"></i></a>
-      <a href="#"><i class="fa-brands fa-square-instagram"></i></a>
-      <a href="#"><i class="fa-brands fa-linkedin"></i></a>
+<footer class="footer mt-auto border-top">
+  <div class="container">
+    <div class="row gy-4 mb-4 pb-2">
+      <!-- Brand & About -->
+      <div class="col-12 col-md-5 col-lg-4">
+        <a class="navbar-brand fw-bold text-danger d-flex align-items-center gap-2 mb-3" href="/listings" style="font-size: 1.4rem;">
+          <i class="fa-solid fa-hotel"></i>
+          <span>Wanderlust</span>
+        </a>
+        <p class="text-muted small pe-md-4 mb-0" style="line-height: 1.6;">
+          Discover unique stays around the world. Book cabins, beachfront homes, luxury hotels, and more with Wanderlust. Your next great adventure starts here.
+        </p>
+      </div>
+
+      <!-- Links -->
+      <div class="col-6 col-md-3 col-lg-4 d-flex flex-column align-items-md-center">
+        <div>
+          <h6 class="fw-bold mb-3">Quick Links</h6>
+          <ul class="list-unstyled d-flex flex-column gap-2 small mb-0">
+            <li><a href="/listings" class="footer-link">Explore Listings</a></li>
+            <li><a href="/listings/new" class="footer-link">Add a Property</a></li>
+            <li><a href="/privacy" class="footer-link">Privacy Policy</a></li>
+            <li><a href="/terms" class="footer-link">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Socials -->
+      <div class="col-6 col-md-4 col-lg-4 d-flex flex-column align-items-end align-items-md-end">
+        <h6 class="fw-bold mb-3 text-end w-100">Connect With Me</h6>
+        <div class="d-flex gap-2 justify-content-end w-100">
+          <a href="https://github.com/dhruvKuchekar123" target="_blank" class="social-icon" aria-label="GitHub">
+            <i class="fa-brands fa-github"></i>
+          </a>
+          <a href="https://www.linkedin.com/in/dhruv-kuchekar-9601501b1/" target="_blank" class="social-icon" aria-label="LinkedIn">
+            <i class="fa-brands fa-linkedin-in"></i>
+          </a>
+          <a href="https://www.instagram.com/dhruv.kuchekar/" target="_blank" class="social-icon" aria-label="Instagram">
+            <i class="fa-brands fa-instagram"></i>
+          </a>
+        </div>
+      </div>
     </div>
 
-    <!-- Info Row -->
-    <div class="f-info-bottom">
-      <div class="f-info-text">
-        &copy; Wanderlust Private Limited
-      </div>
-      <div class="f-info-links">
-        <a href="/privacy">Privacy</a>
-        <a href="/terms">Terms</a>
+    <hr class="my-3 border-secondary opacity-25">
+
+    <!-- Bottom -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 small text-muted pt-2">
+      <div>&copy; <%= new Date().getFullYear() %> Wanderlust by Dhruv Kuchekar. All rights reserved.</div>
+      <div>
+        Made with <i class="fa-solid fa-heart text-danger mx-1"></i> in India
       </div>
     </div>
-    
   </div>
 </footer>

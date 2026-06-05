@@ -1,0 +1,28 @@
+<!-- Mobile Bottom Navigation Bar (visible only on mobile) -->
+<nav class="mobile-bottom-nav d-md-none">
+  <a href="/listings" class="mobile-nav-item <%= typeof currentPath !== 'undefined' && currentPath === '/listings' ? 'active' : '' %>">
+    <i class="fa-solid fa-compass"></i>
+    <span>Explore</span>
+  </a>
+  <% if(currUser) { %>
+    <a href="/listings/new" class="mobile-nav-item">
+      <div class="mobile-nav-add-btn">
+        <i class="fa-solid fa-plus"></i>
+      </div>
+    </a>
+    <a href="/users/<%= currUser._id %>" class="mobile-nav-item">
+      <i class="fa-solid fa-circle-user"></i>
+      <span>Profile</span>
+    </a>
+  <% } else { %>
+    <a href="/login" class="mobile-nav-item">
+      <div class="mobile-nav-add-btn">
+        <i class="fa-solid fa-plus"></i>
+      </div>
+    </a>
+    <a href="/login" class="mobile-nav-item">
+      <i class="fa-solid fa-right-to-bracket"></i>
+      <span>Log In</span>
+    </a>
+  <% } %>
+</nav>

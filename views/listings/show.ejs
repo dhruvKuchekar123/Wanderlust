@@ -1,160 +1,721 @@
 <% layout("layouts/boilerplate") %>
 <script>
-  const mapToken = "<%= process.env.MAP_TOKEN %>"; // ✅ removed trailing space
-  const coordinates = <%-JSON.stringify(listing.geometry.coordinates)%>; // ✅ correctly parse as array -->
+  const mapToken = "<%= process.env.MAP_TOKEN %>";
+  const coordinates = <%- JSON.stringify(listing.geometry.coordinates) %>;
 </script>
-  <div class="container py-5">    
-    <div class="bg-white p-5 rounded-4 shadow-lg mx-auto" style="max-width: 700px;">
-      <h2 class="mb-4 text-center text-uppercase fw-bold text-primary display-8">
-      <%= listing.title %>
-    </h2>
-      <!-- Image -->
-      <div class="mb-4 text-center">
-        <img src="<%= listing.image.url %>" alt="listing_image" class="img-fluid rounded-4 shadow-sm" style="height: 320px; object-fit: cover;">
+
+<%
+  let totalRating = 0;
+  for(let review of listing.reviews) { totalRating += review.rating; }
+  let avgRating = listing.reviews.length > 0 ? (totalRating / listing.reviews.length).toFixed(1) : "New";
+
+  // Category-matched curated image sets (Pexels permanent direct URLs)
+  const categoryImages = {
+    "Beachfront":    ["https://images.pexels.com/photos/1174732/pexels-photo-1174732.jpeg?w=1200","https://images.pexels.com/photos/1320686/pexels-photo-1320686.jpeg?w=1200","https://images.pexels.com/photos/460621/pexels-photo-460621.jpeg?w=1200","https://images.pexels.com/photos/2476123/pexels-photo-2476123.jpeg?w=1200"],
+    "Cabins":        ["https://images.pexels.com/photos/803975/pexels-photo-803975.jpeg?w=1200","https://images.pexels.com/photos/1438832/pexels-photo-1438832.jpeg?w=1200","https://images.pexels.com/photos/2079234/pexels-photo-2079234.jpeg?w=1200","https://images.pexels.com/photos/1450363/pexels-photo-1450363.jpeg?w=1200"],
+    "OMG!":          ["https://images.pexels.com/photos/2360673/pexels-photo-2360673.jpeg?w=1200","https://images.pexels.com/photos/1643389/pexels-photo-1643389.jpeg?w=1200","https://images.pexels.com/photos/2507010/pexels-photo-2507010.jpeg?w=1200","https://images.pexels.com/photos/2029731/pexels-photo-2029731.jpeg?w=1200"],
+    "Tiny Homes":    ["https://images.pexels.com/photos/2119714/pexels-photo-2119714.jpeg?w=1200","https://images.pexels.com/photos/1029599/pexels-photo-1029599.jpeg?w=1200","https://images.pexels.com/photos/2581922/pexels-photo-2581922.jpeg?w=1200","https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg?w=1200"],
+    "Camping":       ["https://images.pexels.com/photos/1687845/pexels-photo-1687845.jpeg?w=1200","https://images.pexels.com/photos/2666598/pexels-photo-2666598.jpeg?w=1200","https://images.pexels.com/photos/1658967/pexels-photo-1658967.jpeg?w=1200","https://images.pexels.com/photos/2422283/pexels-photo-2422283.jpeg?w=1200"],
+    "Lakefront":     ["https://images.pexels.com/photos/147411/italy-mountains-dawn-daybreak-147411.jpeg?w=1200","https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg?w=1200","https://images.pexels.com/photos/1586298/pexels-photo-1586298.jpeg?w=1200","https://images.pexels.com/photos/572897/pexels-photo-572897.jpeg?w=1200"],
+    "Desert":        ["https://images.pexels.com/photos/1001435/pexels-photo-1001435.jpeg?w=1200","https://images.pexels.com/photos/1169754/pexels-photo-1169754.jpeg?w=1200","https://images.pexels.com/photos/2387873/pexels-photo-2387873.jpeg?w=1200","https://images.pexels.com/photos/1738987/pexels-photo-1738987.jpeg?w=1200"],
+    "Urban":         ["https://images.pexels.com/photos/1134166/pexels-photo-1134166.jpeg?w=1200","https://images.pexels.com/photos/2096983/pexels-photo-2096983.jpeg?w=1200","https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?w=1200","https://images.pexels.com/photos/1796715/pexels-photo-1796715.jpeg?w=1200"],
+    "Hiking":        ["https://images.pexels.com/photos/1365425/pexels-photo-1365425.jpeg?w=1200","https://images.pexels.com/photos/842711/pexels-photo-842711.jpeg?w=1200","https://images.pexels.com/photos/2440021/pexels-photo-2440021.jpeg?w=1200","https://images.pexels.com/photos/1483880/pexels-photo-1483880.jpeg?w=1200"],
+    "Hotel":         ["https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?w=1200","https://images.pexels.com/photos/338504/pexels-photo-338504.jpeg?w=1200","https://images.pexels.com/photos/261102/pexels-photo-261102.jpeg?w=1200","https://images.pexels.com/photos/2506988/pexels-photo-2506988.jpeg?w=1200"],
+    "Arctic":        ["https://images.pexels.com/photos/2220336/pexels-photo-2220336.jpeg?w=1200","https://images.pexels.com/photos/60155/pexels-photo-60155.jpeg?w=1200","https://images.pexels.com/photos/1670187/pexels-photo-1670187.jpeg?w=1200","https://images.pexels.com/photos/386009/pexels-photo-386009.jpeg?w=1200"],
+    "Historical":    ["https://images.pexels.com/photos/208701/pexels-photo-208701.jpeg?w=1200","https://images.pexels.com/photos/2363/france-landmark-lights-night.jpg?w=1200","https://images.pexels.com/photos/1537086/pexels-photo-1537086.jpeg?w=1200","https://images.pexels.com/photos/1209978/pexels-photo-1209978.jpeg?w=1200"],
+    "Pools":         ["https://images.pexels.com/photos/261181/pexels-photo-261181.jpeg?w=1200","https://images.pexels.com/photos/2847648/pexels-photo-2847648.jpeg?w=1200","https://images.pexels.com/photos/1619569/pexels-photo-1619569.jpeg?w=1200","https://images.pexels.com/photos/2377164/pexels-photo-2377164.jpeg?w=1200"],
+    "Pet Friendly":  ["https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?w=1200","https://images.pexels.com/photos/356378/pexels-photo-356378.jpeg?w=1200","https://images.pexels.com/photos/1390361/pexels-photo-1390361.jpeg?w=1200","https://images.pexels.com/photos/1404819/pexels-photo-1404819.jpeg?w=1200"],
+    "Tropical":      ["https://images.pexels.com/photos/1802255/pexels-photo-1802255.jpeg?w=1200","https://images.pexels.com/photos/994605/pexels-photo-994605.jpeg?w=1200","https://images.pexels.com/photos/210186/pexels-photo-210186.jpeg?w=1200","https://images.pexels.com/photos/1174732/pexels-photo-1174732.jpeg?w=1200"],
+    "Luxury":        ["https://images.pexels.com/photos/1001965/pexels-photo-1001965.jpeg?w=1200","https://images.pexels.com/photos/2506988/pexels-photo-2506988.jpeg?w=1200","https://images.pexels.com/photos/261102/pexels-photo-261102.jpeg?w=1200","https://images.pexels.com/photos/189296/pexels-photo-189296.jpeg?w=1200"],
+    "Boats":         ["https://images.pexels.com/photos/273886/pexels-photo-273886.jpeg?w=1200","https://images.pexels.com/photos/1118873/pexels-photo-1118873.jpeg?w=1200","https://images.pexels.com/photos/1001682/pexels-photo-1001682.jpeg?w=1200","https://images.pexels.com/photos/237272/pexels-photo-237272.jpeg?w=1200"],
+    "Futuristic":    ["https://images.pexels.com/photos/1797158/pexels-photo-1797158.jpeg?w=1200","https://images.pexels.com/photos/2724748/pexels-photo-2724748.jpeg?w=1200","https://images.pexels.com/photos/3214995/pexels-photo-3214995.jpeg?w=1200","https://images.pexels.com/photos/2029731/pexels-photo-2029731.jpeg?w=1200"],
+  };
+
+  // Build slides: real image first, then 4 curated ones
+  const cat = listing.category || "Hotel";
+  const extraImgs = categoryImages[cat] || categoryImages["Hotel"];
+  const allSlides = [listing.image.url, ...extraImgs];
+%>
+
+<style>
+/* ======================================
+   PREMIUM IMAGE SLIDER
+====================================== */
+.hero-slider-wrapper {
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  user-select: none;
+  touch-action: pan-y;
+  background: #111;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.hero-slider-track {
+  display: flex;
+  height: 480px;
+  transition: transform 0.65s cubic-bezier(0.77, 0, 0.18, 1);
+  will-change: transform;
+}
+@media (max-width: 768px) {
+  .hero-slider-track { height: 260px; }
+}
+
+.hero-slide {
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+.hero-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 8s ease;
+}
+/* Subtle Ken Burns zoom while active */
+.hero-slide.is-active img {
+  transform: scale(1.06);
+}
+
+/* Gradient overlay at the bottom */
+.hero-overlay {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 2.5rem 2rem 1.5rem;
+  background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.3) 60%, transparent 100%);
+}
+
+/* Arrow buttons */
+.slider-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: white;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  opacity: 0;
+}
+.slider-btn:hover {
+  background: rgba(255,255,255,0.32);
+  transform: translateY(-50%) scale(1.1);
+}
+.slider-btn.prev { left: 14px; }
+.slider-btn.next { right: 14px; }
+.hero-slider-wrapper:hover .slider-btn { opacity: 1; }
+
+/* Mobile: always show buttons */
+@media (max-width: 768px) {
+  .slider-btn { opacity: 0.7; width: 36px; height: 36px; font-size: 0.9rem; }
+}
+
+/* Dots */
+.slider-dots {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  z-index: 10;
+}
+.slider-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.45);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+.slider-dot.active {
+  background: white;
+  width: 24px;
+  border-radius: 4px;
+}
+
+/* Slide counter badge */
+.slide-counter {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(6px);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  z-index: 10;
+}
+
+/* Thumbnail strip below slider */
+.slider-thumbs {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+.slider-thumb {
+  flex: 1;
+  height: 64px;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  opacity: 0.55;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+.slider-thumb img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+.slider-thumb.active {
+  opacity: 1;
+  border-color: #ff385c;
+  transform: scale(1.03);
+}
+.slider-thumb:hover { opacity: 0.85; }
+@media (max-width: 576px) { .slider-thumbs { display: none; } }
+</style>
+
+<div class="container-fluid px-3 px-md-4 py-4">
+
+  <!-- ===================== PREMIUM HERO SLIDER ===================== -->
+  <div class="mb-3" data-aos="fade-up">
+    <div class="hero-slider-wrapper" id="heroSlider">
+
+      <!-- Slide counter -->
+      <div class="slide-counter" id="slideCounter">1 / <%= allSlides.length %></div>
+
+      <!-- Slider track -->
+      <div class="hero-slider-track" id="sliderTrack">
+        <% allSlides.forEach((img, i) => { %>
+          <div class="hero-slide <%= i === 0 ? 'is-active' : '' %>">
+            <img src="<%= img %>" 
+                 alt="<%= listing.title %> - View <%= i+1 %>"
+                 loading="<%= i === 0 ? 'eager' : 'lazy' %>">
+          </div>
+        <% }) %>
       </div>
-      <!-- Owner -->
-      <div class="mb-3 text-center text-muted">
-        Owned by <i class="fa-solid fa-user me-1"></i>
-        <em>
-          <%= listing.owner && listing.owner.username ? listing.owner.username : "Unknown" %>
-        </em>
+
+      <!-- Gradient overlay with title -->
+      <div class="hero-overlay">
+        <h1 class="text-white fw-bold mb-1" style="font-size:clamp(1.4rem, 4vw, 2.2rem); text-shadow: 0 2px 8px rgba(0,0,0,0.4);">
+          <%= listing.title %>
+        </h1>
+        <div class="d-flex align-items-center flex-wrap gap-2">
+          <span class="text-white" style="opacity:0.9; font-size:0.95rem;">
+            <i class="fa-solid fa-location-dot me-1 text-danger"></i><%= listing.location %>, <%= listing.country %>
+          </span>
+          <% if(listing.category) { %>
+            <span class="badge rounded-pill px-3 py-1 fw-semibold" style="background:rgba(255,56,92,0.85); font-size:0.75rem;">
+              <%= listing.category %>
+            </span>
+          <% } %>
+        </div>
       </div>
-      <!-- Description -->
-      <div class="mb-3">
-        <label class="form-label fw-semibold text-dark">Description</label>
-        <p class="form-control-plaintext fs-6 text-muted"><%= listing.description %></p>
+
+      <!-- Arrow buttons -->
+      <button class="slider-btn prev" id="prevBtn" aria-label="Previous image">
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
+      <button class="slider-btn next" id="nextBtn" aria-label="Next image">
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
+
+      <!-- Navigation dots -->
+      <div class="slider-dots" id="sliderDots">
+        <% allSlides.forEach((_, i) => { %>
+          <button class="slider-dot <%= i === 0 ? 'active' : '' %>" data-index="<%= i %>" aria-label="Go to slide <%= i+1 %>"></button>
+        <% }) %>
       </div>
-      <!-- Price -->
-      <div class="mb-3">
-        <label class="form-label fw-semibold text-dark">Price</label>
-        <p class="form-control-plaintext text-success fw-bold fs-5">₹<%= listing.price.toLocaleString("en-IN") %> / night</p>
+    </div>
+
+    <!-- Thumbnail strip -->
+    <div class="slider-thumbs" id="sliderThumbs">
+      <% allSlides.forEach((img, i) => { %>
+        <div class="slider-thumb <%= i === 0 ? 'active' : '' %>" data-index="<%= i %>">
+          <img src="<%= img %>" alt="Thumbnail <%= i+1 %>" loading="lazy">
+        </div>
+      <% }) %>
+    </div>
+  </div>
+
+  <!-- ===================== TWO-COLUMN LAYOUT ===================== -->
+  <div class="row g-4 g-lg-5">
+
+    <!-- LEFT: Main Content -->
+    <div class="col-lg-7">
+
+      <!-- Host + Rating -->
+      <div class="d-flex align-items-center justify-content-between mb-4 pb-3 border-bottom" data-aos="fade-up">
+        <div class="d-flex align-items-center gap-3">
+          <div class="review-avatar" style="width:48px;height:48px;font-size:1.2rem;">
+            <%= (listing.owner && listing.owner.username ? listing.owner.username : 'H')[0].toUpperCase() %>
+          </div>
+          <div>
+            <p class="mb-0 fw-bold">Hosted by <span class="text-danger"><%= listing.owner && listing.owner.username ? listing.owner.username : "Unknown" %></span></p>
+            <p class="mb-0 text-muted small">Professional Host</p>
+          </div>
+        </div>
+        <div class="text-end">
+          <div class="badge bg-warning text-dark px-3 py-2 rounded-pill fs-6">
+            <i class="fa-solid fa-star me-1"></i><%= avgRating %>
+          </div>
+          <% if(listing.reviews.length > 0) { %>
+            <div class="text-muted small mt-1"><%= listing.reviews.length %> reviews</div>
+          <% } %>
+        </div>
       </div>
-      <!-- Location -->
-      <div class="mb-4">
-        <label class="form-label fw-semibold text-dark">Location</label>
-        <p class="form-control-plaintext text-muted"><%= listing.location %>, <%= listing.country %></p>
+
+      <!-- About + Price -->
+      <div data-aos="fade-up" data-aos-delay="50">
+        <h5 class="fw-bold mb-2">About this place</h5>
+        <p class="text-muted lh-lg"><%= listing.description %></p>
       </div>
-      <!-- Action Buttons (Edit/Delete only for owner) -->
+
+      <!-- Price + Category chips -->
+      <div class="d-flex flex-wrap gap-3 mt-3 mb-4" data-aos="fade-up" data-aos-delay="100">
+        <div class="px-4 py-3 rounded-4 border text-center">
+          <div class="text-success fw-bold fs-4">₹<%= listing.price.toLocaleString("en-IN") %></div>
+          <div class="text-muted" style="font-size:0.8rem;">per night</div>
+        </div>
+        <% if(listing.category) { %>
+        <div class="px-4 py-3 rounded-4 border text-center">
+          <div class="fw-bold fs-5"><%= listing.category %></div>
+          <div class="text-muted" style="font-size:0.8rem;">category</div>
+        </div>
+        <% } %>
+        <div class="px-4 py-3 rounded-4 border text-center">
+          <div class="fw-bold fs-5"><i class="fa-solid fa-map-pin text-danger"></i></div>
+          <div class="text-muted" style="font-size:0.8rem;"><%= listing.country %></div>
+        </div>
+      </div>
+
+      <!-- Owner Edit/Delete -->
       <% if (currUser && listing.owner && listing.owner._id.toString() === currUser._id.toString()) { %>
-        <div class="d-flex justify-content-between align-items-center mb-4">
-          <a href="/listings/<%= listing._id %>/edit" class="btn btn-warning px-4">
+        <div class="d-flex gap-3 mb-4" data-aos="fade-up">
+          <a href="/listings/<%= listing._id %>/edit" class="btn btn-warning rounded-pill px-4">
             <i class="fa-solid fa-pen-to-square me-1"></i> Edit
           </a>
-          <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE"
-                onsubmit="return confirm('Are you sure you want to delete this listing?');">
-            <button type="submit" class="btn btn-danger px-4">
+          <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE" onsubmit="return confirm('Delete this listing?');">
+            <button type="submit" class="btn btn-danger rounded-pill px-4">
               <i class="fa-solid fa-trash-can me-1"></i> Delete
             </button>
           </form>
         </div>
       <% } %>
 
-      <hr class="mb-5">
+      <hr class="my-4">
+
       <!-- Review Form -->
       <% if (currUser) { %>
-        <div class="mt-4">
-          <h5 class="fw-bold mb-4 text-center text-primary">Leave a Review</h5>
-
-          <form action="/listings/<%= listing._id %>/reviews" method="POST" class="p-4 rounded-4 bg-light border shadow-sm">
-            <!-- Rating -->
-            <div class="mb-4">
-              <label for="rating" class="form-label fw-semibold text-dark">
-                Rating (1 to 5): <span id="ratingValue" class="text-primary fw-bold">3</span>
-              </label>
-              <input 
-                type="range" 
-                min="1" 
-                max="5" 
-                value="3" 
-                class="form-range" 
-                name="review[rating]" 
-                id="rating"
-                oninput="document.getElementById('ratingValue').textContent = this.value"
-                required
-              />
+        <div class="mb-5" data-aos="fade-up">
+          <h5 class="fw-bold mb-3">Leave a Review</h5>
+          <form action="/listings/<%= listing._id %>/reviews" method="POST" class="p-4 rounded-4 border">
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Your Rating</label>
+              <fieldset class="starability-slot">
+                <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked aria-label="No rating." />
+                <input type="radio" id="first-rate1" name="review[rating]" value="1" /><label for="first-rate1" title="Terrible">1 star</label>
+                <input type="radio" id="first-rate2" name="review[rating]" value="2" /><label for="first-rate2" title="Not good">2 stars</label>
+                <input type="radio" id="first-rate3" name="review[rating]" value="3" /><label for="first-rate3" title="Average">3 stars</label>
+                <input type="radio" id="first-rate4" name="review[rating]" value="4" /><label for="first-rate4" title="Very good">4 stars</label>
+                <input type="radio" id="first-rate5" name="review[rating]" value="5" /><label for="first-rate5" title="Amazing">5 stars</label>
+              </fieldset>
             </div>
-
-            <!-- Comment -->
-            <div class="mb-4">
-              <label for="comment" class="form-label fw-semibold text-dark">Comment</label>
-              <textarea 
-                class="form-control" 
-                name="review[comment]" 
-                id="comment" 
-                rows="4"
-                placeholder="Write your thoughts about this place..."
-                required
-              ></textarea>
+            <div class="mb-3">
+              <label for="comment" class="form-label fw-semibold">Comment</label>
+              <textarea class="form-control" name="review[comment]" id="comment" rows="3" placeholder="Share your experience..." required></textarea>
             </div>
-
-            <!-- Submit Button -->
-            <div class="text-center">
-              <button type="submit" class="btn btn-success px-5">
-                <i class="fa-solid fa-paper-plane me-1"></i> Submit Review
-              </button>
-            </div>
+            <button type="submit" class="btn btn-danger rounded-pill px-4">
+              <i class="fa-solid fa-paper-plane me-1"></i> Submit Review
+            </button>
           </form>
         </div>
       <% } %>
-   <!-- Display All Reviews -->
+
+      <!-- Display Reviews -->
       <% if (listing.reviews.length > 0) { %>
-        <hr class="my-5">
-        <h5 class="fw-bold mb-4 text-center text-secondary">What Others Are Saying</h5>
-
-        <div class="row g-4">
-          <% listing.reviews.forEach((review) => { %>
-            <div class="col-md-6">
-              <div class="card border-0 shadow-sm rounded-4 h-100 bg-white">
-                <div class="card-body d-flex flex-column justify-content-between">
-                  <h6 class="card-subtitle mb-2 text-muted">
-                    <i class="fa-solid fa-user me-1"></i>
-                    <%= review.author && review.author.username ? review.author.username : "Anonymous" %>
-                  </h6>
-
-                  <!-- Rating & Date -->
-                  <div class="d-flex justify-content-between mb-2 align-items-center">
-                    <div>
-                      <% for (let i = 1; i <= 5; i++) { %>
-                        <i class="fa-star <%= i <= review.rating ? 'fas text-warning' : 'far text-muted' %>"></i>
-                      <% } %>
-                      <span class="fw-semibold text-success ms-1"><%= review.rating %> / 5</span>
-                    </div>
-                    <small class="text-muted">
-                      <%= review.createdAt ? new Date(review.createdAt).toLocaleDateString("en-IN", { day: 'numeric', month: 'short', year: 'numeric' }) : "Just now" %>
-                    </small>
+        <div data-aos="fade-up">
+          <h5 class="fw-bold mb-4">What Others Are Saying (<%= listing.reviews.length %>)</h5>
+          <div class="d-flex flex-column gap-3">
+            <% listing.reviews.forEach((review) => { %>
+              <div class="card border-0 shadow-sm rounded-4 p-3" data-aos="fade-up">
+                <div class="d-flex align-items-start gap-3">
+                  <div class="review-avatar">
+                    <%= (review.author && review.author.username ? review.author.username : 'A')[0].toUpperCase() %>
                   </div>
-
-                  <!-- Comment -->
-                  <% if (review.comment && review.comment.trim().length > 0) { %>
-                    <p class="card-text text-dark">
-                      <i class="fa-solid fa-quote-left me-1 text-secondary"></i>
-                      <%= review.comment %>
-                    </p>
-                  <% } else { %>
-                    <p class="text-muted fst-italic">No comment provided.</p>
-                  <% } %>
-
-                  <!-- Delete Review -->
-                  <form action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE" method="POST" onsubmit="return confirm('Delete this review?');">
-                    <button class="btn btn-sm btn-outline-danger w-100 mt-3">
-                      <i class="fa-solid fa-trash-can me-1"></i> Delete
-                    </button>
-                  </form>
-
+                  <div class="flex-grow-1">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                      <span class="fw-semibold"><%= review.author && review.author.username ? review.author.username : "Anonymous" %></span>
+                      <small class="text-muted"><%= review.createdAt ? new Date(review.createdAt).toLocaleDateString("en-IN", { day:'numeric', month:'short', year:'numeric' }) : "Just now" %></small>
+                    </div>
+                    <p class="starability-result m-0 mb-2" data-rating="<%= review.rating %>">Rated: <%= review.rating %> stars</p>
+                    <% if (review.comment && review.comment.trim().length > 0) { %>
+                      <p class="mb-2 text-muted"><i class="fa-solid fa-quote-left me-1 opacity-50"></i><%= review.comment %></p>
+                    <% } %>
+                    <form action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE" method="POST" onsubmit="return confirm('Delete this review?');">
+                      <button class="btn btn-sm btn-outline-danger rounded-pill">
+                        <i class="fa-solid fa-trash-can me-1"></i> Delete
+                      </button>
+                    </form>
+                  </div>
                 </div>
               </div>
-            </div>
-          <% }) %>
+            <% }) %>
+          </div>
         </div>
       <% } else { %>
         <p class="text-muted text-center mt-4">No reviews yet. Be the first to leave one!</p>
       <% } %>
 
     </div>
-    <div class="bg-white p-5 rounded-4 shadow-lg mx-auto" style="max-width: 700px;">
-       <h3>Where You'll be</h3>
-       <div id="map" style="height: 400px;"></div>
+
+    <!-- RIGHT: Sticky Booking Sidebar -->
+    <div class="col-lg-5">
+      <div class="booking-sidebar" data-aos="fade-left">
+        <div class="card border-0 shadow rounded-4 p-4">
+          <div class="d-flex align-items-baseline gap-2 mb-1">
+            <span class="fs-3 fw-bold">₹<%= listing.price.toLocaleString("en-IN") %></span>
+            <span class="text-muted">/ night</span>
+          </div>
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <i class="fa-solid fa-star text-warning"></i>
+            <span class="fw-semibold"><%= avgRating %></span>
+            <% if(listing.reviews.length > 0) { %>
+              <span class="text-muted">· <%= listing.reviews.length %> reviews</span>
+            <% } %>
+          </div>
+          <hr class="my-2">
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Check-in → Check-out</label>
+            <input type="text" id="bookingDates" class="form-control" placeholder="Select your dates">
+          </div>
+          <div class="d-flex justify-content-between align-items-center mb-2 text-muted">
+            <span>Total Nights</span>
+            <span id="totalNights" class="fw-bold text-dark">0</span>
+          </div>
+          <div class="d-flex justify-content-between align-items-center mb-3 fs-5 fw-bold border-top pt-2">
+            <span>Total</span>
+            <span id="totalPrice" class="text-danger">₹0</span>
+          </div>
+          <button type="button" class="btn btn-danger w-100 rounded-pill fw-bold py-2" id="reserveBtn" data-bs-toggle="modal" data-bs-target="#paymentModal" disabled>
+            Reserve
+          </button>
+          <p class="text-center text-muted small mt-2">You won't be charged yet</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Map -->
+  <div class="mt-5" data-aos="fade-up">
+    <h5 class="fw-bold mb-3">Where You'll Be</h5>
+    <div id="map"></div>
+  </div>
+
+</div>
+
+<!-- Mobile Sticky Booking Bar -->
+<div class="mobile-booking-bar">
+  <div>
+    <div class="fw-bold fs-5">₹<%= listing.price.toLocaleString("en-IN") %> <span class="fw-normal text-muted fs-6">/ night</span></div>
+    <div id="mobilePrice" class="text-danger fw-semibold small"></div>
+  </div>
+  <button type="button" class="btn btn-danger rounded-pill px-4 fw-bold" id="mobileReserveBtn" data-bs-toggle="modal" data-bs-target="#paymentModal">
+    Reserve
+  </button>
+</div>
+
+<!-- Mock Payment Modal -->
+<div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4 border-0 shadow">
+      <div class="modal-header border-bottom-0 pb-0">
+        <h5 class="modal-title fw-bold" id="paymentModalLabel">Complete your booking</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body pt-2">
+        <p class="text-muted mb-4">You are about to pay <span class="fw-bold text-dark" id="modalPrice">₹0</span> for your stay.</p>
+        <form id="mockPaymentForm">
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Card Number</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light"><i class="fa-regular fa-credit-card"></i></span>
+              <input type="text" class="form-control" placeholder="0000 0000 0000 0000" required maxlength="19" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(.{4})/g, '$1 ').trim()">
+            </div>
+          </div>
+          <div class="row mb-4">
+            <div class="col-6">
+              <label class="form-label fw-semibold">Expiry</label>
+              <input type="text" class="form-control" placeholder="MM/YY" required maxlength="5">
+            </div>
+            <div class="col-6">
+              <label class="form-label fw-semibold">CVC</label>
+              <input type="password" class="form-control" placeholder="123" required maxlength="3">
+            </div>
+          </div>
+          <button type="submit" class="btn btn-danger w-100 rounded-pill py-2 fw-bold" id="payButton">Pay Now</button>
+        </form>
+      </div>
     </div>
   </div>
- <script src="/js/map.js"></script>
+</div>
 
+<!-- ===================== SLIDER JAVASCRIPT ===================== -->
+<script>
+(function() {
+  const track      = document.getElementById('sliderTrack');
+  const slides     = track.querySelectorAll('.hero-slide');
+  const dots       = document.querySelectorAll('.slider-dot');
+  const thumbs     = document.querySelectorAll('.slider-thumb');
+  const counter    = document.getElementById('slideCounter');
+  const prevBtn    = document.getElementById('prevBtn');
+  const nextBtn    = document.getElementById('nextBtn');
+  const wrapper    = document.getElementById('heroSlider');
+  const total      = slides.length;
+
+  let current    = 0;
+  let autoTimer  = null;
+  let isPaused   = false;
+  let touchStartX = 0;
+  let touchEndX   = 0;
+
+  function goTo(index, dir) {
+    slides[current].classList.remove('is-active');
+    dots[current].classList.remove('active');
+    thumbs[current].classList.remove('active');
+
+    current = (index + total) % total;
+
+    slides[current].classList.add('is-active');
+    dots[current].classList.add('active');
+    thumbs[current].classList.add('active');
+
+    track.style.transform = `translateX(-${current * 100}%)`;
+    counter.textContent = `${current + 1} / ${total}`;
+  }
+
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+
+  function startAuto() {
+    stopAuto();
+    autoTimer = setInterval(() => { if (!isPaused) next(); }, 4000);
+  }
+  function stopAuto() {
+    if (autoTimer) clearInterval(autoTimer);
+  }
+
+  // Buttons
+  nextBtn.addEventListener('click', () => { next(); startAuto(); });
+  prevBtn.addEventListener('click', () => { prev(); startAuto(); });
+
+  // Dots
+  dots.forEach((dot, i) => {
+    dot.addEventListener('click', () => { goTo(i); startAuto(); });
+  });
+
+  // Thumbnails
+  thumbs.forEach((thumb, i) => {
+    thumb.addEventListener('click', () => { goTo(i); startAuto(); });
+  });
+
+  // Pause on hover
+  wrapper.addEventListener('mouseenter', () => { isPaused = true; });
+  wrapper.addEventListener('mouseleave', () => { isPaused = false; });
+
+  // Touch / Swipe support
+  wrapper.addEventListener('touchstart', e => {
+    touchStartX = e.changedTouches[0].clientX;
+  }, { passive: true });
+  wrapper.addEventListener('touchend', e => {
+    touchEndX = e.changedTouches[0].clientX;
+    const diff = touchStartX - touchEndX;
+    if (Math.abs(diff) > 40) {
+      diff > 0 ? next() : prev();
+      startAuto();
+    }
+  }, { passive: true });
+
+  // Keyboard navigation
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowLeft') { prev(); startAuto(); }
+    if (e.key === 'ArrowRight') { next(); startAuto(); }
+  });
+
+  // Start
+  startAuto();
+})();
+</script>
+
+<!-- Booking / Date Picker Script -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const listingPrice = <%= listing.price %>;
+
+  flatpickr("#bookingDates", {
+    mode: "range",
+    minDate: "today",
+    dateFormat: "Y-m-d",
+    onChange: function(selectedDates) {
+      if (selectedDates.length === 2) {
+        const diffDays = Math.ceil(Math.abs(selectedDates[1] - selectedDates[0]) / (1000*60*60*24));
+        const priceStr = "₹" + (diffDays * listingPrice).toLocaleString("en-IN");
+        document.getElementById("totalNights").innerText = diffDays;
+        document.getElementById("totalPrice").innerText = priceStr;
+        document.getElementById("modalPrice").innerText = priceStr;
+        const mp = document.getElementById("mobilePrice");
+        if(mp) mp.innerText = diffDays + " nights · " + priceStr;
+        document.getElementById("reserveBtn").removeAttribute("disabled");
+      } else {
+        document.getElementById("totalNights").innerText = "0";
+        document.getElementById("totalPrice").innerText = "₹0";
+        const mp = document.getElementById("mobilePrice");
+        if(mp) mp.innerText = "";
+        document.getElementById("reserveBtn").setAttribute("disabled","true");
+      }
+    }
+  });
+
+  document.getElementById("mockPaymentForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    const btn = document.getElementById("payButton");
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
+    btn.setAttribute("disabled","true");
+    const bookingDates = document.getElementById("bookingDates")._flatpickr.selectedDates;
+    const checkIn  = bookingDates[0] ? bookingDates[0].toISOString().split('T')[0] : "";
+    const checkOut = bookingDates[1] ? bookingDates[1].toISOString().split('T')[0] : "";
+    const totalNights = document.getElementById("totalNights").innerText;
+    const totalPrice  = parseInt(totalNights) * listingPrice;
+    const cardInput   = document.querySelector('input[placeholder="0000 0000 0000 0000"]').value;
+    const cardName    = cardInput ? "Card Ending in " + cardInput.slice(-4) : "Mock Card";
+    fetch(`/listings/<%= listing._id %>/book`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ checkIn, checkOut, totalNights, totalPrice, cardName })
+    })
+    .then(r => r.json())
+    .then(data => {
+      const modal = bootstrap.Modal.getInstance(document.getElementById('paymentModal'));
+      modal.hide();
+      btn.innerHTML = 'Pay Now';
+      btn.removeAttribute("disabled");
+      document.getElementById("mockPaymentForm").reset();
+      document.getElementById("bookingDates")._flatpickr.clear();
+      document.getElementById("totalNights").innerText = "0";
+      document.getElementById("totalPrice").innerText = "₹0";
+      document.getElementById("reserveBtn").setAttribute("disabled","true");
+      if(data.success) {
+        showSuccessOverlay();
+      } else {
+        alert("Error: " + data.message);
+      }
+    })
+    .catch(() => {
+      btn.innerHTML = 'Pay Now';
+      btn.removeAttribute("disabled");
+      alert("Something went wrong. Please make sure you are logged in.");
+    });
+  });
+});
+
+// --- Success Overlay Logic ---
+function showSuccessOverlay() {
+  const overlay = document.getElementById("paymentSuccessOverlay");
+  overlay.style.display = "flex";
+  // Trigger animation by forcing reflow
+  void overlay.offsetWidth;
+  overlay.classList.add("show");
+}
+
+function closeSuccessOverlay() {
+  const overlay = document.getElementById("paymentSuccessOverlay");
+  overlay.classList.remove("show");
+  setTimeout(() => {
+    overlay.style.display = "none";
+  }, 400); // Wait for fade out
+}
+</script>
+
+<!-- Payment Success Overlay HTML -->
+<div id="paymentSuccessOverlay" class="success-overlay">
+  <div class="success-card text-center">
+    <!-- Animated Checkmark -->
+    <div class="success-animation">
+      <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+        <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+        <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+      </svg>
+    </div>
+    <h3 class="fw-bold mt-4 mb-2">Payment Successful!</h3>
+    <p class="text-muted mb-4">Your booking is confirmed. A detailed payment receipt will be sent to your registered email address shortly.</p>
+    <button class="btn btn-danger w-100 rounded-pill py-2 fw-bold" onclick="closeSuccessOverlay()">Awesome, Thanks!</button>
+  </div>
+</div>
+
+<!-- Overlay CSS -->
+<style>
+.success-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.success-overlay.show { opacity: 1; }
+
+.success-card {
+  background: white;
+  padding: 3rem 2rem;
+  border-radius: 24px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  transform: translateY(30px) scale(0.95);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.success-overlay.show .success-card { transform: translateY(0) scale(1); }
+[data-bs-theme="dark"] .success-card {
+  background: #1e1e30;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+[data-bs-theme="dark"] .success-card p { color: #aaa !important; }
+
+/* SVG Animation */
+.success-animation { width: 80px; height: 80px; margin: 0 auto; }
+.checkmark { width: 80px; height: 80px; border-radius: 50%; display: block; stroke-width: 3; stroke: #28a745; stroke-miterlimit: 10; box-shadow: inset 0px 0px 0px #28a745; animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both; }
+.checkmark__circle { stroke-dasharray: 166; stroke-dashoffset: 166; stroke-width: 3; stroke-miterlimit: 10; stroke: #28a745; fill: none; animation: stroke .6s cubic-bezier(0.65, 0, 0.45, 1) forwards; }
+.checkmark__check { transform-origin: 50% 50%; stroke-dasharray: 48; stroke-dashoffset: 48; animation: stroke .3s cubic-bezier(0.65, 0, 0.45, 1) .8s forwards; }
+@keyframes stroke { 100% { stroke-dashoffset: 0; } }
+@keyframes scale { 0%, 100% { transform: none; } 50% { transform: scale3d(1.1, 1.1, 1); } }
+@keyframes fill { 100% { box-shadow: inset 0px 0px 0px 40px rgba(40, 167, 69, 0.1); } }
+[data-bs-theme="dark"] .checkmark { stroke: #34c759; box-shadow: inset 0px 0px 0px #34c759; }
+[data-bs-theme="dark"] .checkmark__circle { stroke: #34c759; }
+@keyframes fill { 100% { box-shadow: inset 0px 0px 0px 40px rgba(52, 199, 89, 0.15); } }
+</style>
+<script src="/js/map.js"></script>

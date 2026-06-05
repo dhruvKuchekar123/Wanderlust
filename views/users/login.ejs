@@ -1,83 +1,96 @@
 <% layout("layouts/boilerplate") %>
 
-
-
 <style>
-  body {
-    background: linear-gradient(135deg, #74ebd5 0%, #ACB6E5 100%);
-    font-family: 'Segoe UI', sans-serif;
+  .auth-bg {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 40%, #ff385c 100%);
+    animation: gradientShift 8s ease infinite alternate;
+    background-size: 200% 200%;
   }
-
-  .login-card {
-    max-width: 420px;
-    margin: auto;
-    border-radius: 1rem;
-    background-color: rgba(255, 255, 255, 0.95);
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.15);
-    animation: fadeIn 0.6s ease-in-out;
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
   }
-
-  .login-card h3 {
-    font-weight: 700;
-    color: #333;
+  .auth-card {
+    max-width: 430px;
+    width: 100%;
+    border-radius: 24px;
+    background: white;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.2);
+    animation: slideUp 0.5s cubic-bezier(0.25,0.8,0.25,1);
   }
-
+  [data-bs-theme="dark"] .auth-card { background: #1e1e30; }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
   .form-control:focus {
-    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    border-color: #ff385c !important;
+    box-shadow: 0 0 0 3px rgba(255,56,92,0.15) !important;
   }
-
-  .btn-primary {
-    background-color: #0069d9;
-    border: none;
-    transition: 0.3s ease;
+  .input-animated {
+    transition: border-color 0.25s, box-shadow 0.25s;
+    border-radius: 12px !important;
+    padding: 0.6rem 0.9rem;
   }
-
-  .btn-primary:hover {
-    background-color: #0053ba;
-  }
-
-  .card-footer a {
-    color: #0069d9;
-    text-decoration: none;
-    font-weight: 500;
-  }
-
-  .card-footer a:hover {
-    text-decoration: underline;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+  .auth-brand-icon {
+    width: 56px; height: 56px;
+    background: #ff385c;
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1rem;
+    color: white; font-size: 1.5rem;
+    box-shadow: 0 8px 24px rgba(255,56,92,0.4);
   }
 </style>
 
-<!-- Login Card -->
-<div class="d-flex align-items-center justify-content-center min-vh-100 px-3">
-  <div class="card login-card p-4">
-    <div class="card-header bg-transparent text-center border-0">
-      <h3 class="mb-0">Welcome Back 👋</h3>
-      <small class="text-muted">Please login to your account</small>
-    </div>
+<div class="auth-bg d-flex align-items-center justify-content-center min-vh-100 px-3 py-5">
+  <div class="auth-card p-4 p-md-5">
+    <div class="auth-brand-icon"><i class="fa-solid fa-hotel"></i></div>
+    <h2 class="text-center fw-bold mb-1">Welcome Back 👋</h2>
+    <p class="text-center text-muted mb-4 small">Please login to your account</p>
 
-    <div class="card-body">
-      <form action="/login" method="POST" novalidate>
-        <div class="mb-3">
-          <label for="username" class="form-label fw-bold">Username</label>
-          <input type="text" name="username" class="form-control" id="username" placeholder="Enter username" required>
+    <form action="/login" method="POST" novalidate>
+      <div class="mb-3">
+        <label for="username" class="form-label fw-semibold small">Username</label>
+        <input type="text" name="username" class="form-control input-animated" id="username" placeholder="Enter your username" required>
+      </div>
+
+      <div class="mb-4">
+        <label for="password" class="form-label fw-semibold small">Password</label>
+        <div class="password-wrapper">
+          <input type="password" name="password" class="form-control input-animated pe-5" id="password" placeholder="Enter your password" required>
+          <span class="password-toggle" onclick="togglePass('password', this)">
+            <i class="fa-regular fa-eye"></i>
+          </span>
         </div>
+      </div>
 
-        <div class="mb-3">
-          <label for="password" class="form-label fw-bold">Password</label>
-          <input type="password" name="password" class="form-control" id="password" placeholder="Enter password" required>
-        </div>
+      <button class="btn btn-danger w-100 rounded-pill fw-bold py-2 mb-3" type="submit">
+        Log In <i class="fa-solid fa-arrow-right ms-1"></i>
+      </button>
 
-        <button type="submit" class="btn btn-primary w-100 fw-bold">Login</button>
-      </form>
-    </div>
+      <div class="text-center">
+        <a href="/forgot" class="text-danger text-decoration-none small fw-semibold">Forgot Password?</a>
+      </div>
+    </form>
 
-    <div class="card-footer bg-transparent text-center border-0 mt-2">
-      <small class="text-muted">Don't have an account? <a href="/signup">Sign up</a></small>
-    </div>
+    <hr class="my-4">
+    <p class="text-center text-muted small mb-0">
+      Don't have an account? <a href="/signup" class="text-danger fw-semibold text-decoration-none">Sign up free</a>
+    </p>
   </div>
 </div>
+
+<script>
+function togglePass(id, el) {
+  const input = document.getElementById(id);
+  const icon = el.querySelector('i');
+  if(input.type === 'password') {
+    input.type = 'text';
+    icon.className = 'fa-regular fa-eye-slash';
+  } else {
+    input.type = 'password';
+    icon.className = 'fa-regular fa-eye';
+  }
+}
+</script>

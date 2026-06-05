@@ -1,86 +1,97 @@
 <% layout("layouts/boilerplate") %>
 
 <style>
-  body {
-    background: linear-gradient(to right, #fddb92 0%, #d1fdff 100%);
-    font-family: 'Segoe UI', sans-serif;
+  .auth-bg {
+    background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 50%, #fd79a8 100%);
+    animation: gradientShift 8s ease infinite alternate;
+    background-size: 200% 200%;
   }
-
-  .signup-card {
-    max-width: 450px;
-    margin: auto;
-    border-radius: 1rem;
-    background-color: rgba(255, 255, 255, 0.95);
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.15);
-    animation: slideIn 0.6s ease-in-out;
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
   }
-
-  .signup-card h3 {
-    font-weight: 700;
-    color: #333;
+  .auth-card {
+    max-width: 460px;
+    width: 100%;
+    border-radius: 24px;
+    background: white;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.2);
+    animation: slideUp 0.5s cubic-bezier(0.25,0.8,0.25,1);
   }
-
+  [data-bs-theme="dark"] .auth-card { background: #1e1e30; }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
   .form-control:focus {
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    border-color: #ff385c !important;
+    box-shadow: 0 0 0 3px rgba(255,56,92,0.15) !important;
   }
-
-  .btn-primary {
-    background-color: #007bff;
-    border: none;
-    transition: 0.3s ease;
+  .input-animated {
+    transition: border-color 0.25s, box-shadow 0.25s;
+    border-radius: 12px !important;
+    padding: 0.6rem 0.9rem;
   }
-
-  .btn-primary:hover {
-    background-color: #0056b3;
-  }
-
-  .card-footer a {
-    color: #007bff;
-    text-decoration: none;
-    font-weight: 500;
-  }
-
-  .card-footer a:hover {
-    text-decoration: underline;
-  }
-
-  @keyframes slideIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+  .auth-brand-icon {
+    width: 56px; height: 56px;
+    background: #ff385c;
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1rem;
+    color: white; font-size: 1.5rem;
+    box-shadow: 0 8px 24px rgba(255,56,92,0.4);
   }
 </style>
 
-<!-- Signup Card -->
-<div class="d-flex align-items-center justify-content-center min-vh-100 px-3">
-  <div class="card signup-card p-4">
-    <div class="card-header bg-transparent text-center border-0">
-      <h3 class="mb-0">Signup on Wanderlust ✈️</h3>
-      <small class="text-muted">Create a free account</small>
-    </div>
+<div class="auth-bg d-flex align-items-center justify-content-center min-vh-100 px-3 py-5">
+  <div class="auth-card p-4 p-md-5">
+    <div class="auth-brand-icon"><i class="fa-solid fa-hotel"></i></div>
+    <h2 class="text-center fw-bold mb-1">Join Wanderlust ✈️</h2>
+    <p class="text-center text-muted mb-4 small">Create your free account today</p>
 
-    <div class="card-body">
-      <form action="/signup" method="POST" novalidate>
-        <div class="mb-3">
-          <label for="username" class="form-label fw-bold">Username</label>
-          <input type="text" name="username" class="form-control" id="username" placeholder="Choose a username" required>
+    <form action="/signup" method="POST" novalidate>
+      <div class="mb-3">
+        <label for="username" class="form-label fw-semibold small">Username</label>
+        <input type="text" name="username" class="form-control input-animated" id="username" placeholder="Choose a username" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="email" class="form-label fw-semibold small">Email address</label>
+        <input type="email" name="email" class="form-control input-animated" id="email" placeholder="Enter your email" required>
+      </div>
+
+      <div class="mb-4">
+        <label for="password" class="form-label fw-semibold small">Password</label>
+        <div class="password-wrapper">
+          <input type="password" name="password" class="form-control input-animated pe-5" id="password" placeholder="Create a strong password" required>
+          <span class="password-toggle" onclick="togglePass('password', this)">
+            <i class="fa-regular fa-eye"></i>
+          </span>
         </div>
+      </div>
 
-        <div class="mb-3">
-          <label for="email" class="form-label fw-bold">Email address</label>
-          <input type="email" name="email" class="form-control" id="email" placeholder="Enter your email" required>
-        </div>
+      <button type="submit" class="btn btn-danger w-100 rounded-pill fw-bold py-2 mb-3">
+        Create Account <i class="fa-solid fa-arrow-right ms-1"></i>
+      </button>
+    </form>
 
-        <div class="mb-3">
-          <label for="password" class="form-label fw-bold">Password</label>
-          <input type="password" name="password" class="form-control" id="password" placeholder="Create a password" required>
-        </div>
-
-        <button type="submit" class="btn btn-primary w-100 fw-bold">Sign Up</button>
-      </form>
-    </div>
-
-    <div class="card-footer bg-transparent text-center border-0 mt-2">
-      <small class="text-muted">Already have an account? <a href="/login">Login here</a></small>
-    </div>
+    <hr class="my-4">
+    <p class="text-center text-muted small mb-0">
+      Already have an account? <a href="/login" class="text-danger fw-semibold text-decoration-none">Log in</a>
+    </p>
   </div>
 </div>
+
+<script>
+function togglePass(id, el) {
+  const input = document.getElementById(id);
+  const icon = el.querySelector('i');
+  if(input.type === 'password') {
+    input.type = 'text';
+    icon.className = 'fa-regular fa-eye-slash';
+  } else {
+    input.type = 'password';
+    icon.className = 'fa-regular fa-eye';
+  }
+}
+</script>

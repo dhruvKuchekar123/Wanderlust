@@ -1,0 +1,233 @@
+<% layout("layouts/boilerplate") %>
+
+<style>
+  /* Profile hero gradient — adapts to dark mode via CSS variables */
+  .profile-hero-card {
+    background: linear-gradient(135deg, #ff385c 0%, #c0392b 60%, #8e1a2e 100%);
+    border-radius: 24px;
+    padding: 2.5rem;
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+  .profile-hero-card::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 200px; height: 200px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 50%;
+  }
+  .profile-hero-card::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: -30px;
+    width: 260px; height: 260px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 50%;
+  }
+
+  .profile-avatar {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    border: 3px solid rgba(255,255,255,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: white;
+    flex-shrink: 0;
+    backdrop-filter: blur(6px);
+  }
+
+  .profile-stat-card {
+    border-radius: 16px;
+    padding: 1.25rem 1rem;
+    text-align: center;
+    border: 1.5px solid rgba(0,0,0,0.06);
+    background: white;
+    transition: all 0.3s ease;
+  }
+  .profile-stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+    border-color: #ff385c;
+  }
+  [data-bs-theme="dark"] .profile-stat-card {
+    background: #1e1e30;
+    border-color: rgba(255,255,255,0.08);
+  }
+
+  .listing-card-profile {
+    border-radius: 18px;
+    overflow: hidden;
+    border: none;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+  }
+  .listing-card-profile:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.15);
+  }
+  [data-bs-theme="dark"] .listing-card-profile {
+    background: #1e1e30;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  }
+  [data-bs-theme="dark"] .listing-card-profile:hover {
+    box-shadow: 0 18px 40px rgba(0,0,0,0.5);
+  }
+
+  .empty-state {
+    border-radius: 20px;
+    padding: 3rem;
+    border: 2px dashed rgba(0,0,0,0.1);
+    text-align: center;
+  }
+  [data-bs-theme="dark"] .empty-state {
+    border-color: rgba(255,255,255,0.1);
+  }
+</style>
+
+<div class="container py-4 py-md-5">
+
+  <!-- Profile Hero Card -->
+  <div class="profile-hero-card mb-4" data-aos="fade-up">
+    <div class="position-relative" style="z-index:1;">
+      <div class="d-flex align-items-center gap-4 flex-wrap">
+        <!-- Avatar with first letter -->
+        <div class="profile-avatar">
+          <%= profileUser.username[0].toUpperCase() %>
+        </div>
+        <!-- Info -->
+        <div class="flex-grow-1">
+          <h2 class="fw-bold mb-1 text-white" style="font-size: clamp(1.4rem, 4vw, 2rem);">
+            <%= profileUser.username %>
+          </h2>
+          <p class="mb-1 opacity-85" style="font-size:0.95rem;">
+            <i class="fa-solid fa-envelope me-2"></i><%= profileUser.email %>
+          </p>
+          <p class="mb-0 opacity-70" style="font-size:0.85rem;">
+            <i class="fa-regular fa-calendar me-2"></i>
+            Member since <%= new Date(profileUser._id.getTimestamp()).toLocaleDateString("en-US", { year: 'numeric', month: 'long' }) %>
+          </p>
+        </div>
+        <!-- Owner badge -->
+        <% if (currUser && currUser._id.equals(profileUser._id)) { %>
+          <a href="/listings/new" class="btn btn-light rounded-pill px-4 fw-bold text-danger shadow-sm">
+            <i class="fa-solid fa-plus me-2"></i>Add Listing
+          </a>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Row -->
+  <div class="row g-3 mb-5" data-aos="fade-up" data-aos-delay="100">
+    <div class="col-6 col-md-3">
+      <div class="profile-stat-card">
+        <div class="fs-2 fw-bold text-danger"><%= userListings.length %></div>
+        <div class="text-muted small fw-semibold">Listings</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="profile-stat-card">
+        <div class="fs-2 fw-bold text-warning">
+          <i class="fa-solid fa-star fa-sm"></i>
+          <%
+            let totalReviews = 0;
+            userListings.forEach(l => { if(l.reviews) totalReviews += l.reviews.length; });
+          %>
+          <%= totalReviews %>
+        </div>
+        <div class="text-muted small fw-semibold">Reviews Received</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="profile-stat-card">
+        <div class="fs-2 fw-bold text-success">
+          ₹<%
+            let totalEarnings = userListings.reduce((sum, l) => sum + (l.price || 0), 0);
+          %><%= totalEarnings.toLocaleString("en-IN") %>
+        </div>
+        <div class="text-muted small fw-semibold">Total Listed Value</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="profile-stat-card">
+        <div class="fs-2 fw-bold" style="color:#a29bfe;">
+          <i class="fa-solid fa-shield-halved fa-sm"></i>
+          Verified
+        </div>
+        <div class="text-muted small fw-semibold">Account Status</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Listings Section -->
+  <div class="d-flex align-items-center justify-content-between mb-4" data-aos="fade-up">
+    <h4 class="fw-bold mb-0">
+      <% if (currUser && currUser._id.equals(profileUser._id)) { %>
+        Your Listings
+      <% } else { %>
+        Listings by <span class="text-danger"><%= profileUser.username %></span>
+      <% } %>
+    </h4>
+    <% if (currUser && currUser._id.equals(profileUser._id)) { %>
+      <a href="/listings/new" class="btn btn-danger rounded-pill px-3 fw-semibold" style="font-size:0.85rem;">
+        <i class="fa-solid fa-plus me-1"></i> New
+      </a>
+    <% } %>
+  </div>
+
+  <% if(userListings.length === 0) { %>
+    <div class="empty-state" data-aos="fade-up">
+      <div style="font-size:3rem; margin-bottom:1rem;">🏠</div>
+      <h5 class="fw-bold mb-2">No listings yet</h5>
+      <p class="text-muted mb-3">
+        <% if (currUser && currUser._id.equals(profileUser._id)) { %>
+          You haven't created any listings. Share your space and start earning!
+        <% } else { %>
+          This host hasn't listed any properties yet.
+        <% } %>
+      </p>
+      <% if (currUser && currUser._id.equals(profileUser._id)) { %>
+        <a href="/listings/new" class="btn btn-danger rounded-pill px-4 fw-bold">
+          <i class="fa-solid fa-plus me-2"></i>Create Your First Listing
+        </a>
+      <% } %>
+    </div>
+  <% } else { %>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+      <% for (let listing of userListings) { %>
+        <div class="col" data-aos="fade-up">
+          <a href="/listings/<%= listing._id %>" class="text-decoration-none">
+            <div class="listing-card-profile">
+              <div style="position:relative; overflow:hidden;">
+                <img 
+                  src="<%= listing.image.url %>" 
+                  alt="<%= listing.title %>"
+                  style="width:100%; height:200px; object-fit:cover; display:block; transition: transform 0.5s ease;"
+                  loading="lazy"
+                  onmouseover="this.style.transform='scale(1.06)'"
+                  onmouseout="this.style.transform='scale(1)'"
+                >
+                <% if(listing.category) { %>
+                  <span class="card-category-badge"><%= listing.category %></span>
+                <% } %>
+              </div>
+              <div class="p-3">
+                <h6 class="fw-bold mb-1 text-truncate"><%= listing.title %></h6>
+                <p class="mb-0 text-muted small"><i class="fa-solid fa-location-dot me-1 text-danger"></i><%= listing.location %>, <%= listing.country %></p>
+                <p class="mb-0 fw-semibold text-success mt-1">₹<%= listing.price.toLocaleString("en-IN") %> <span class="text-muted fw-normal" style="font-size:0.8rem;">/ night</span></p>
+              </div>
+            </div>
+          </a>
+        </div>
+      <% } %>
+    </div>
+  <% } %>
+
+</div>

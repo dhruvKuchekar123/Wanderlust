@@ -11,8 +11,9 @@ const userSchema = new Schema({
     username:{
         type:String,
         required:true
-    }
-    
+    },
+    resetPasswordToken: String,
+    resetPasswordExpires: Date
 });
 userSchema.plugin(passportLocalMongoose);
 

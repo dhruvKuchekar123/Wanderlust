@@ -28,6 +28,7 @@ const User = require("./models/user");
 const listingRouter = require("./routes/listing");
 const reviewRouter = require("./routes/review");
 const userRouter = require("./routes/user");
+const bookingRouter = require("./routes/booking");
 
 // =======================
 // DATABASE
@@ -50,6 +51,7 @@ app.set("views", path.join(__dirname, "views"));
 // =======================
 // MIDDLEWARES
 // =======================
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
@@ -121,6 +123,7 @@ app.get("/", (req, res) => {
 
 app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewRouter); // 🔥 FIXED
+app.use("/listings/:id/book", bookingRouter);
 app.use("/", userRouter);
 
 // =======================

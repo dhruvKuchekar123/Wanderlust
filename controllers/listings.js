@@ -8,8 +8,39 @@ const geocodingClient = mbxGeocoding({ accessToken: mapToken });
 // SHOW ALL LISTINGS
 // =======================
 module.exports.index = async (req, res) => {
-  const allListings = await Listing.find({});
-  res.render("listings/index.ejs", { allListings });
+  let { q, category, page } = req.query;
+  const limit = 9; // listings per page
+  page = parseInt(page) || 1;
+  const skip = (page - 1) * limit;
+
+  let query = {};
+  if (q) {
+    query = {
+      $or: [
+        { title: { $regex: q, $options: "i" } },
+        { location: { $regex: q, $options: "i" } },
+        { country: { $regex: q, $options: "i" } }
+      ]
+    };
+  } else if (category) {
+    query.category = category;
+  }
+
+  const allListings = await Listing.find(query)
+    .populate("reviews")
+    .skip(skip)
+    .limit(limit);
+
+  const totalListings = await Listing.countDocuments(query);
+  const totalPages = Math.ceil(totalListings / limit);
+
+  res.render("listings/index.ejs", { 
+    allListings, 
+    searchQuery: q, 
+    currentCategory: category,
+    currentPage: page,
+    totalPages
+  });
 };
 
 // =======================

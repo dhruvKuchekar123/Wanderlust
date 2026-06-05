@@ -1,195 +1,207 @@
 <% layout("layouts/boilerplate") %>
 
 <style>
-  /* Hide scrollbar across browsers */
-  .hide-scrollbar {
-    overflow-x: auto;
-    white-space: nowrap;
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;     /* Firefox */
-  }
-
-  .hide-scrollbar::-webkit-scrollbar {
-    display: none;             /* Chrome, Safari, Opera */
-  }
-
-  .icon-bar {
-    display: flex;
-    gap: 2rem;
-    justify-content: flex-start;
-    flex-wrap: nowrap;
-    align-items: center;
-  }
-
+  /* Dark-mode aware icon bar */
   .icon-item {
     text-align: center;
     flex: 0 0 auto;
+    transition: all 0.2s ease;
   }
+  .icon-item i { font-size: 1.25rem; }
 
-  .icon-item i {
-    font-size: 1.25rem;
-  }
-
-  .filter-section {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-  }
-
-  .total-tax {
-    font-weight: bold;
-    font-size: 1rem;
-  }
-
+  /* Override filter button in index only - use red brand */
   .filter-btn {
-    background-color: #ff385c;
-    color: white;
-    border: none;
+    background: white;
+    color: #333;
+    border: 1.5px solid #ddd;
     padding: 8px 16px;
-    border-radius: 8px;
-    font-weight: 500;
-    transition: 0.2s;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.25s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+  [data-bs-theme="dark"] .filter-btn {
+    background: #1e1e30;
+    color: #ddd;
+    border-color: #3a3a5a;
+  }
+  .filter-btn:hover { border-color: #ff385c; color: #ff385c; }
+
+  /* Dark mode: make icon items clearly visible */
+  [data-bs-theme="dark"] .icon-item {
+    color: #ccc !important;
+  }
+  [data-bs-theme="dark"] .icon-item:hover,
+  [data-bs-theme="dark"] .icon-item.border-danger {
+    color: #ff385c !important;
   }
 
-  .filter-btn:hover {
-    background-color: #e03150;
+  /* Dark mode: category wrapper border */
+  [data-bs-theme="dark"] .border-bottom {
+    border-color: rgba(255,255,255,0.1) !important;
   }
 </style>
 
 <!-- Category Icons Bar & Filter Button -->
-<div class="container-fluid py-3 px-4 border-bottom hide-scrollbar">
+<div class="container-fluid py-3 px-4 border-bottom">
   <div class="filter-section">
-    <div class="icon-bar">
-
-      <div class="icon-item">
-        <i class="fa-solid fa-umbrella-beach"></i><br>
-        <small>Beachfront</small>
-      </div>
-
-      <div class="icon-item">
-        <i class="fa-solid fa-mountain"></i><br>
-        <small>Cabins</small>
-      </div>
-
-      <div class="icon-item">
-        <i class="fa-solid fa-bolt"></i><br>
-        <small>OMG!</small>
-      </div>
-
-      <div class="icon-item">
-        <i class="fa-solid fa-house"></i><br>
-        <small>Tiny Homes</small>
-      </div>
-
-      <div class="icon-item">
-        <i class="fa-solid fa-tree"></i><br>
-        <small>Camping</small>
-      </div>
-
-      <div class="icon-item">
-        <i class="fa-solid fa-water"></i><br>
-        <small>Lakefront</small>
-      </div>
-
-      <div class="icon-item">
-        <i class="fa-solid fa-wind"></i><br>
-        <small>Desert</small>
-      </div>
-
-      <div class="icon-item">
-        <i class="fa-solid fa-city"></i><br>
-        <small>Urban</small>
-      </div>
-
-      <div class="icon-item">
-        <i class="fa-solid fa-person-hiking"></i><br>
-        <small>Hiking</small>
-      </div>
-
-      <div class="icon-item">
-        <i class="fa-solid fa-hotel"></i><br>
-        <small>Hotel</small>
-      </div>
-
-      <div class="icon-item">
-        <i class="fa-solid fa-igloo"></i><br>
-        <small>Arctic</small>
-      </div>
-
-      <div class="icon-item">
-        <i class="fa-solid fa-vihara"></i><br>
-        <small>Historical</small>
-      </div>
-
-      <div class="icon-item">
-        <i class="fa-solid fa-person-swimming"></i><br>
-        <small>Pools</small>
-      </div>
-
-      <div class="icon-item">
-        <i class="fa-solid fa-paw"></i><br>
-        <small>Pet Friendly</small>
-      </div>
-
-      <div class="icon-item">
-        <i class="fa-solid fa-sun"></i><br>
-        <small>Tropical</small>
-      </div>
-
-      <div class="icon-item">
-        <i class="fa-solid fa-campground"></i><br>
-        <small>Yurts</small>
-      </div>
-
-      <div class="icon-item">
-        <i class="fa-solid fa-ship"></i><br>
-        <small>Boats</small>
-      </div>
-
-      <div class="icon-item">
-        <i class="fa-solid fa-rocket"></i><br>
-        <small>Futuristic</small>
-      </div>
-
-      <div class="icon-item">
-        <i class="fa-solid fa-champagne-glasses"></i><br>
-        <small>Luxury</small>
-      </div>
-
+    <div class="category-scroll-wrapper flex-grow-1 hide-scrollbar me-3">
+    <div class="icon-bar d-flex align-items-center gap-4">
+      <% const categories = [
+        { name: "Beachfront", icon: "fa-umbrella-beach" },
+        { name: "Cabins", icon: "fa-mountain" },
+        { name: "OMG!", icon: "fa-bolt" },
+        { name: "Tiny Homes", icon: "fa-house" },
+        { name: "Camping", icon: "fa-tree" },
+        { name: "Lakefront", icon: "fa-water" },
+        { name: "Desert", icon: "fa-wind" },
+        { name: "Urban", icon: "fa-city" },
+        { name: "Hiking", icon: "fa-person-hiking" },
+        { name: "Hotel", icon: "fa-hotel" },
+        { name: "Arctic", icon: "fa-igloo" },
+        { name: "Historical", icon: "fa-vihara" },
+        { name: "Pools", icon: "fa-person-swimming" },
+        { name: "Pet Friendly", icon: "fa-paw" },
+        { name: "Tropical", icon: "fa-sun" },
+        { name: "Yurts", icon: "fa-campground" },
+        { name: "Boats", icon: "fa-ship" },
+        { name: "Futuristic", icon: "fa-rocket" },
+        { name: "Luxury", icon: "fa-champagne-glasses" }
+      ]; %>
+      <% if(typeof currentCategory !== 'undefined' && currentCategory || typeof searchQuery !== 'undefined' && searchQuery) { %>
+        <a href="/listings" class="icon-item text-decoration-none text-dark opacity-75 me-2" style="min-width: max-content;">
+          <i class="fa-solid fa-xmark"></i><br>
+          <small>Clear</small>
+        </a>
+      <% } %>
+      <% for(let cat of categories) { %>
+        <a href="/listings?category=<%= cat.name %>" class="icon-item text-decoration-none text-dark <%= typeof currentCategory !== 'undefined' && currentCategory === cat.name ? 'border-bottom border-danger border-2 pb-1 text-danger opacity-100' : 'opacity-75' %>" style="min-width: max-content;">
+          <i class="fa-solid <%= cat.icon %>"></i><br>
+          <small><%= cat.name %></small>
+        </a>
+      <% } %>
+    </div>
     </div>
 
-    <!-- Top Right Corner: Total After Taxes + Filter -->
-   
-      <button class="filter-btn" onclick="alert('Add filter logic here')">
-        <i class="fa-solid fa-filter"></i> Filter
-      </button>
-    </div>
+    <!-- Filter Button -->
+    <button class="filter-btn flex-shrink-0">
+      <i class="fa-solid fa-sliders"></i> Filter
+    </button>
   </div>
 </div>
 
 <!-- Listings Grid -->
-<div class="row row-cols-1 row-cols-md-3 g-4 mt-3">
-  <% for (let listing of allListings) { %>
-    <div class="col">
-      <a href="/listings/<%= listing._id %>" class="text-decoration-none text-dark">
-        <div class="card listing-card h-100 border-0 shadow-sm">
-          <div class="image-container rounded-top">
-            <img 
-              src="<%= listing.image.url %>" 
-              class="card-img-top rounded-top" 
-              alt="listing image"
-            >
-            <div class="overlay">
-              <span class="text-white fw-bold">View Details</span>
+<% if (currentPage === 1 && !searchQuery && !currentCategory && allListings.length > 0) { %>
+  <!-- Hero Carousel -->
+  <div id="heroCarousel" class="carousel slide mb-4 mt-3" data-bs-ride="carousel">
+    <div class="carousel-inner rounded-4 shadow">
+      <% 
+        // Get up to 3 listings for the carousel
+        const carouselListings = allListings.slice(0, 3);
+      %>
+      <% carouselListings.forEach((listing, index) => { %>
+        <div class="carousel-item <%= index === 0 ? 'active' : '' %>" data-bs-interval="4000">
+          <div style="height: 400px; background-image: url('<%= listing.image.url %>'); background-size: cover; background-position: center;">
+            <div class="d-flex h-100 align-items-center justify-content-center" style="background: rgba(0,0,0,0.4);">
+              <div class="text-center text-white">
+                <h1 class="display-4 fw-bold mb-3"><%= listing.title %></h1>
+                <p class="lead mb-4"><i class="fa-solid fa-location-dot me-2"></i><%= listing.location %>, <%= listing.country %></p>
+                <a href="/listings/<%= listing._id %>" class="btn btn-danger btn-lg rounded-pill px-4 fw-bold shadow">Explore Now</a>
+              </div>
             </div>
           </div>
-          <div class="card-body rounded-bottom bg-white">
-            <h5 class="card-title fw-bold"><%= listing.title %></h5>
-            <p class="card-text">₹<%= listing.price.toLocaleString("en-IN") %>/night</p>
-          </div>
         </div>
-      </a>
+      <% }) %>
     </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+  </div>
+<% } %>
+
+<div class="row row-cols-1 row-cols-md-3 g-4 mt-3">
+  <% if(allListings.length === 0) { %>
+    <div class="text-center mt-5">
+      <i class="fa-solid fa-magnifying-glass fs-1 text-muted mb-3"></i>
+      <h4 class="fw-bold">No exact matches</h4>
+      <p class="text-muted">Try changing or removing some of your filters or adjusting your search area.</p>
+      <a href="/listings" class="btn btn-outline-dark mt-2">Remove all filters</a>
+    </div>
+  <% } else { %>
+    <% for (let listing of allListings) { %>
+      <div class="col">
+        <a href="/listings/<%= listing._id %>" class="text-decoration-none text-dark">
+          <div class="card listing-card h-100 border-0 shadow-sm">
+            <div class="image-container">
+              <img 
+                src="<%= listing.image.url %>" 
+                class="card-img-top" 
+                alt="listing image"
+                loading="lazy"
+              >
+              <!-- Heart / Wishlist button -->
+              <button class="card-wishlist-btn" data-id="<%= listing._id %>" title="Save">
+                <i class="fa-<%= ['heart'].includes('heart') ? 'regular' : 'solid' %> fa-heart"></i>
+              </button>
+              <% if(listing.category) { %>
+                <span class="card-category-badge"><%= listing.category %></span>
+              <% } %>
+              <div class="overlay">
+                <span class="text-white fw-bold">View Details</span>
+              </div>
+            </div>
+            <div class="card-body rounded-bottom">
+              <div class="d-flex justify-content-between align-items-start">
+                <h5 class="card-title fw-bold text-truncate mb-1" style="max-width: 75%;"><%= listing.title %></h5>
+                <% 
+                  let totalRating = 0;
+                  for(let review of listing.reviews) {
+                    totalRating += review.rating;
+                  }
+                  let avgRating = listing.reviews.length > 0 ? (totalRating / listing.reviews.length).toFixed(1) : "New";
+                %>
+                <span class="badge bg-light text-dark shadow-sm border">
+                  <i class="fa-solid fa-star text-warning"></i> <%= avgRating %>
+                </span>
+              </div>
+              <p class="card-text text-muted mb-0">₹<%= listing.price.toLocaleString("en-IN") %> <span class="fw-light">/ night</span></p>
+            </div>
+          </div>
+        </a>
+      </div>
+    <% } %>
   <% } %>
 </div>
+
+<% if(totalPages > 1) { %>
+<div class="d-flex justify-content-center mt-5 mb-3">
+  <nav aria-label="Page navigation">
+    <ul class="pagination pagination-lg">
+      <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+        <a class="page-link text-danger" href="?page=<%= currentPage - 1 %><%= typeof currentCategory !== 'undefined' && currentCategory ? '&category=' + currentCategory : '' %><%= typeof searchQuery !== 'undefined' && searchQuery ? '&q=' + searchQuery : '' %>" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+      <% for(let i = 1; i <= totalPages; i++) { %>
+        <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+          <a class="page-link <%= currentPage === i ? 'bg-danger border-danger text-white' : 'text-danger' %>" href="?page=<%= i %><%= typeof currentCategory !== 'undefined' && currentCategory ? '&category=' + currentCategory : '' %><%= typeof searchQuery !== 'undefined' && searchQuery ? '&q=' + searchQuery : '' %>"><%= i %></a>
+        </li>
+      <% } %>
+      <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+        <a class="page-link text-danger" href="?page=<%= currentPage + 1 %><%= typeof currentCategory !== 'undefined' && currentCategory ? '&category=' + currentCategory : '' %><%= typeof searchQuery !== 'undefined' && searchQuery ? '&q=' + searchQuery : '' %>" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>
+<% } %>

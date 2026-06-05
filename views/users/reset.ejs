@@ -1,0 +1,41 @@
+<% layout("layouts/boilerplate") %>
+<div class="row mt-3">
+  <div class="col-8 offset-2">
+    <h2 class="mb-3 text-center">Reset Password</h2>
+    <div class="card p-4 shadow-sm border-0 rounded-4">
+      <form action="/reset/<%= token %>" method="POST" class="needs-validation" novalidate>
+        <div class="mb-3">
+          <label for="password" class="form-label">New Password</label>
+          <input 
+            type="password" 
+            class="form-control" 
+            id="password" 
+            name="password" 
+            placeholder="Enter new password" 
+            required
+            minlength="4"
+          />
+          <div class="invalid-feedback">
+            Please enter a new password (min 4 characters).
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="confirmPassword" class="form-label">Confirm New Password</label>
+          <input 
+            type="password" 
+            class="form-control" 
+            id="confirmPassword" 
+            name="confirmPassword" 
+            placeholder="Confirm new password" 
+            required
+            minlength="4"
+          />
+          <div class="invalid-feedback">
+            Please confirm your new password.
+          </div>
+        </div>
+        <button class="btn btn-danger btn-lg w-100 mt-2 rounded-pill fw-bold" type="submit">Update Password</button>
+      </form>
+    </div>
+  </div>
+</div>

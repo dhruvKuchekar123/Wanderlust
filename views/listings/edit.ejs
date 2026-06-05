@@ -84,6 +84,18 @@
               </div>
             </div>
 
+            <!-- Category -->
+            <div class="mb-3">
+              <b><label for="category" class="form-label">Category</label></b>
+              <select name="listing[category]" id="category" class="form-select" required>
+                <% const categories = ["Beachfront", "Cabins", "OMG!", "Tiny Homes", "Camping", "Lakefront", "Desert", "Urban", "Hiking", "Hotel", "Arctic", "Historical", "Pools", "Pet Friendly", "Tropical", "Yurts", "Boats", "Futuristic", "Luxury", "Other"]; %>
+                <% for(let cat of categories) { %>
+                  <option value="<%= cat %>" <%= listing.category === cat ? 'selected' : '' %>><%= cat %></option>
+                <% } %>
+              </select>
+              <div class="invalid-feedback">Please select a category</div>
+            </div>
+
             <!-- Location -->
             <div class="mb-3">
               <b><label for="location" class="form-label">Location</label></b>

@@ -1,62 +1,147 @@
 <% layout("layouts/boilerplate") %>
 
-<div class="content-box flex-grow-1 d-flex justify-content-center align-items-start py-5">
-  <div class="col-md-6">
-    <div class="card shadow-sm p-4 bg-light-subtle border-0">
-      <h3 class="mb-4 text-center">Create a New Listing</h3>
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-7">
+      <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5">
 
-      <form action="/listings" method="POST" novalidate class="needs-validation" enctype="multipart/form-data">
-
-        <!-- Title -->
-        <div class="mb-3">
-          <label for="title" class="form-label fw-bold">Title</label>
-          <input name="listing[title]" id="title" placeholder="Enter title" class="form-control" type="text" required>
-          <div class="invalid-feedback">Please enter a title</div>
+        <div class="text-center mb-4">
+          <div style="width:52px;height:52px;background:#ff385c;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 0.75rem;box-shadow:0 8px 24px rgba(255,56,92,0.3);">
+            <i class="fa-solid fa-house-chimney text-white fs-4"></i>
+          </div>
+          <h2 class="fw-bold mb-0">Create a New Listing</h2>
+          <p class="text-muted small">Share your space with the world</p>
         </div>
 
-        <!-- Description -->
-        <div class="mb-3">
-          <label for="description" class="form-label fw-bold">Description</label>
-          <textarea name="listing[description]" id="description" placeholder="Enter description" class="form-control" rows="4" required></textarea>
-          <div class="invalid-feedback">Please enter a short description</div>
-        </div>
+        <form action="/listings" method="POST" class="needs-validation" enctype="multipart/form-data" novalidate>
 
-  
-
-        <div class="mb-3">
-          <label for="image" class="form-label fw-bold">Upload Image</label>
-          <input name="listing[image]" id="image"  class="form-control" type="file" required>
-          <div class="invalid-feedback">Please provide a valid image URL</div>
-        </div>
-
-        <!-- Price & Country -->
-        <div class="row">
-          <div class="mb-3 col-md-4">
-            <label for="price" class="form-label fw-bold">Price</label>
-            <input name="listing[price]" id="price" placeholder="Enter price" class="form-control" type="number" required>
-            <div class="invalid-feedback">Please enter a valid price</div>
+          <!-- Title -->
+          <div class="mb-3">
+            <label for="title" class="form-label fw-semibold small">Title</label>
+            <input name="listing[title]" id="title" placeholder="Give your place a catchy title..." class="form-control" type="text" required>
+            <div class="invalid-feedback">Please enter a title</div>
           </div>
 
-          <div class="mb-3 col-md-8">
-            <label for="country" class="form-label fw-bold">Country</label>
-            <input name="listing[country]" id="country" placeholder="Enter country name" class="form-control" type="text" required>
-            <div class="invalid-feedback">Please enter the country name</div>
+          <!-- Description -->
+          <div class="mb-3">
+            <label for="description" class="form-label fw-semibold small">Description</label>
+            <textarea name="listing[description]" id="description" placeholder="Describe what makes your place special..." class="form-control" rows="4" required></textarea>
+            <div class="invalid-feedback">Please enter a description</div>
           </div>
-        </div>
 
-        <!-- Location -->
-        <div class="mb-3">
-          <label for="location" class="form-label fw-bold">Location</label>
-          <input name="listing[location]" id="location" placeholder="Enter location" class="form-control" type="text" required>
-          <div class="invalid-feedback">Please enter the location</div>
-        </div>
+          <!-- Image Upload with Preview -->
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Upload Image</label>
+            <div class="image-upload-area" id="uploadArea">
+              <i class="fa-solid fa-cloud-arrow-up fs-2 text-muted mb-2 d-block"></i>
+              <p class="text-muted mb-1 small fw-semibold">Click to upload or drag & drop</p>
+              <p class="text-muted" style="font-size:0.75rem;">JPG, PNG, WEBP up to 10MB</p>
+              <input name="listing[image]" id="image" type="file" accept="image/*" required>
+              <div class="invalid-feedback">Please upload an image</div>
+            </div>
+            <img id="imagePreview" class="image-preview-box w-100" alt="Preview">
+          </div>
 
-        <!-- Submit -->
-        <div class="text-center mt-4">
-          <button class="btn btn-success px-4">Add</button>
-        </div>
+          <!-- Price & Country -->
+          <div class="row g-3 mb-3">
+            <div class="col-md-4">
+              <label for="price" class="form-label fw-semibold small">Price / night (₹)</label>
+              <input name="listing[price]" id="price" placeholder="e.g. 2500" class="form-control" type="number" min="0" required>
+              <div class="invalid-feedback">Enter a valid price</div>
+            </div>
+            <div class="col-md-8">
+              <label for="country" class="form-label fw-semibold small">Country</label>
+              <input name="listing[country]" id="country" placeholder="e.g. India" class="form-control" type="text" required>
+              <div class="invalid-feedback">Enter the country name</div>
+            </div>
+          </div>
 
-      </form>
+          <!-- Category — Icon Grid Picker -->
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Category</label>
+            <input type="hidden" name="listing[category]" id="categoryInput" required>
+            <div class="category-icon-grid" id="categoryGrid">
+              <% const cats = [
+                { name: "Beachfront", icon: "fa-umbrella-beach" },
+                { name: "Cabins",     icon: "fa-mountain" },
+                { name: "OMG!",       icon: "fa-bolt" },
+                { name: "Tiny Homes", icon: "fa-house" },
+                { name: "Camping",    icon: "fa-tree" },
+                { name: "Lakefront",  icon: "fa-water" },
+                { name: "Desert",     icon: "fa-wind" },
+                { name: "Urban",      icon: "fa-city" },
+                { name: "Hiking",     icon: "fa-person-hiking" },
+                { name: "Hotel",      icon: "fa-hotel" },
+                { name: "Arctic",     icon: "fa-igloo" },
+                { name: "Historical", icon: "fa-vihara" },
+                { name: "Pools",      icon: "fa-person-swimming" },
+                { name: "Pet Friendly", icon: "fa-paw" },
+                { name: "Tropical",   icon: "fa-sun" },
+                { name: "Luxury",     icon: "fa-champagne-glasses" },
+                { name: "Boats",      icon: "fa-ship" },
+                { name: "Futuristic", icon: "fa-rocket" }
+              ]; %>
+              <% cats.forEach(cat => { %>
+                <div class="category-icon-btn" data-value="<%= cat.name %>">
+                  <i class="fa-solid <%= cat.icon %>"></i>
+                  <%= cat.name %>
+                </div>
+              <% }) %>
+            </div>
+            <div class="invalid-feedback d-block" id="categoryError" style="display:none !important;"></div>
+          </div>
+
+          <!-- Location -->
+          <div class="mb-4">
+            <label for="location" class="form-label fw-semibold small">Location</label>
+            <input name="listing[location]" id="location" placeholder="City, State" class="form-control" type="text" required>
+            <div class="invalid-feedback">Please enter the location</div>
+          </div>
+
+          <!-- Submit -->
+          <button class="btn btn-danger w-100 rounded-pill fw-bold py-2" type="submit">
+            <i class="fa-solid fa-plus me-2"></i>Create Listing
+          </button>
+
+        </form>
+      </div>
     </div>
   </div>
 </div>
+
+<script>
+// Image preview
+document.getElementById('image').addEventListener('change', function() {
+  const file = this.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const preview = document.getElementById('imagePreview');
+      preview.src = e.target.result;
+      preview.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  }
+});
+
+// Category icon grid
+document.querySelectorAll('.category-icon-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.category-icon-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    document.getElementById('categoryInput').value = btn.dataset.value;
+  });
+});
+
+// Form validation
+document.querySelector('form').addEventListener('submit', e => {
+  if (!document.getElementById('categoryInput').value) {
+    e.preventDefault();
+    e.stopPropagation();
+    document.getElementById('categoryError').innerText = 'Please select a category';
+    document.getElementById('categoryError').style.display = 'block';
+  } else {
+    document.getElementById('categoryError').style.display = 'none';
+  }
+});
+</script>

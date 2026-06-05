@@ -30,4 +30,15 @@ router.post(
 // GET: Logout
 router.get("/logout", userController.logout);
 
+// GET: User Profile
+router.get("/users/:id", isLoggedIn, userController.showProfile);
+
+router.route("/forgot")
+  .get(userController.renderForgotForm)
+  .post(userController.forgotPassword);
+
+router.route("/reset/:token")
+  .get(userController.renderResetForm)
+  .post(userController.resetPassword);
+
 module.exports = router;
