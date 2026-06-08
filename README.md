@@ -5,7 +5,7 @@
 > A modern, full-stack property listing and hotel booking platform built with Node.js, Express, and MongoDB.
 
 ### 🚀 Live Demo
-**[👉 Click Here to View Live Project](https://wanderlust-app.onrender.com)** *(Note: Replace this URL with your exact Render web service URL if different)*
+**[👉 Click Here to View Live Project](https://wanderlust-2-49xs.onrender.com)** *(Note: Replace this URL with your exact Render web service URL if different)*
 
 ---
 
