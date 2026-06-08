@@ -453,6 +453,11 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body pt-2">
+        <!-- Mobile Date Picker -->
+        <div class="mb-3 d-lg-none">
+          <label class="form-label fw-semibold small text-muted text-uppercase letter-spacing-1">Select Dates</label>
+          <input type="text" id="mobileBookingDates" class="form-control" placeholder="Check-in → Check-out">
+        </div>
         <p class="text-muted mb-3">You are about to pay <span class="fw-bold text-dark" id="modalPrice">₹0</span> for your stay.</p>
         
         <!-- Payment Methods Tabs -->
@@ -632,7 +637,7 @@
 document.addEventListener("DOMContentLoaded", function() {
   const listingPrice = <%= listing.price %>;
 
-  flatpickr("#bookingDates", {
+  const fpConfig = {
     mode: "range",
     minDate: "today",
     dateFormat: "Y-m-d",
@@ -650,12 +655,19 @@ document.addEventListener("DOMContentLoaded", function() {
       } else {
         document.getElementById("totalNights").innerText = "0";
         document.getElementById("totalPrice").innerText = "₹0";
+        document.getElementById("modalPrice").innerText = "₹0";
+        document.getElementById("btnModalPrice").innerText = "₹0";
         const mp = document.getElementById("mobilePrice");
         if(mp) mp.innerText = "";
         document.getElementById("reserveBtn").setAttribute("disabled","true");
       }
     }
-  });
+  };
+  
+  flatpickr("#bookingDates", fpConfig);
+  if(document.getElementById("mobileBookingDates")) {
+    flatpickr("#mobileBookingDates", fpConfig);
+  }
 
   // --- Strict Payment Validations ---
   const ccNumber = document.getElementById('ccNumber');
@@ -784,7 +796,9 @@ document.addEventListener("DOMContentLoaded", function() {
     btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
     btn.setAttribute("disabled","true");
     
-    const bookingDates = document.getElementById("bookingDates")._flatpickr.selectedDates;
+    const mFp = document.getElementById("mobileBookingDates") ? document.getElementById("mobileBookingDates")._flatpickr : null;
+    const dFp = document.getElementById("bookingDates")._flatpickr;
+    const bookingDates = (mFp && mFp.selectedDates.length === 2) ? mFp.selectedDates : dFp.selectedDates;
     const checkIn  = bookingDates[0] ? bookingDates[0].toISOString().split('T')[0] : "";
     const checkOut = bookingDates[1] ? bookingDates[1].toISOString().split('T')[0] : "";
     const totalNights = document.getElementById("totalNights").innerText;
