@@ -1,7 +1,7 @@
 const Listing = require("./models/listing");
 const Review = require("./models/review");
 const ExpressError = require("./utils/ExpressError.js");
-const { listingSchema, reviewSchema } = require("./schema.js"); // merged
+const { listingSchema, reviewSchema, userSchema } = require("./schema.js"); // merged
 
 // ✅ Middleware: check if user is logged in
 module.exports.isLoggedIn = (req, res, next) => {
@@ -75,5 +75,16 @@ module.exports.isReviewAuthor = async (req, res, next) => {
     return res.redirect(`/listings/${id}`);
   }
 
+  next();
+};
+
+// ✅ Joi schema validation for users (signup)
+module.exports.validateUser = (req, res, next) => {
+  const { error } = userSchema.validate(req.body);
+  if (error) {
+    const errMsg = error.details.map((el) => el.message).join(", ");
+    req.flash("error", errMsg);
+    return res.redirect("/signup");
+  }
   next();
 };

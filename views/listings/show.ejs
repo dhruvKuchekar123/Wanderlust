@@ -453,26 +453,87 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body pt-2">
-        <p class="text-muted mb-4">You are about to pay <span class="fw-bold text-dark" id="modalPrice">₹0</span> for your stay.</p>
-        <form id="mockPaymentForm">
-          <div class="mb-3">
-            <label class="form-label fw-semibold">Card Number</label>
-            <div class="input-group">
-              <span class="input-group-text bg-light"><i class="fa-regular fa-credit-card"></i></span>
-              <input type="text" class="form-control" placeholder="0000 0000 0000 0000" required maxlength="19" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(.{4})/g, '$1 ').trim()">
+        <p class="text-muted mb-3">You are about to pay <span class="fw-bold text-dark" id="modalPrice">₹0</span> for your stay.</p>
+        
+        <!-- Payment Methods Tabs -->
+        <ul class="nav nav-pills mb-4 nav-fill" id="paymentTabs" role="tablist" style="background: #f8f9fa; border-radius: 50px; padding: 4px;">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active rounded-pill fw-bold" id="card-tab" data-bs-toggle="pill" data-bs-target="#pills-card" type="button" role="tab" aria-controls="pills-card" aria-selected="true" style="color: #333;">Card</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link rounded-pill fw-bold" id="gpay-tab" data-bs-toggle="pill" data-bs-target="#pills-gpay" type="button" role="tab" aria-controls="pills-gpay" aria-selected="false" style="color: #333;">GPay</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link rounded-pill fw-bold" id="netbanking-tab" data-bs-toggle="pill" data-bs-target="#pills-netbanking" type="button" role="tab" aria-controls="pills-netbanking" aria-selected="false" style="color: #333;">Net Banking</button>
+          </li>
+        </ul>
+
+        <style>
+          #paymentTabs .nav-link.active { background-color: #ff385c; color: white !important; }
+        </style>
+
+        <form id="mockPaymentForm" novalidate>
+          <div class="tab-content" id="paymentTabsContent">
+            
+            <!-- CARD TAB -->
+            <div class="tab-pane fade show active" id="pills-card" role="tabpanel" aria-labelledby="card-tab">
+              <div class="mb-3 position-relative">
+                <label class="form-label fw-semibold small text-muted text-uppercase letter-spacing-1">Card Number</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-white border-end-0" id="cardBrandIcon"><i class="fa-regular fa-credit-card text-muted"></i></span>
+                  <input type="text" class="form-control border-start-0 ps-0 fs-5 font-monospace" id="ccNumber" placeholder="0000 0000 0000 0000" maxlength="19">
+                </div>
+                <div class="text-danger small mt-1 d-none fw-semibold" id="ccError">Please enter a valid 16-digit card number.</div>
+              </div>
+              <div class="row mb-4">
+                <div class="col-6 position-relative">
+                  <label class="form-label fw-semibold small text-muted text-uppercase letter-spacing-1">Expiry Date</label>
+                  <input type="text" class="form-control fs-5 font-monospace" id="ccExpiry" placeholder="MM/YY" maxlength="5">
+                  <div class="text-danger small mt-1 d-none fw-semibold" id="expiryError">Invalid or expired date.</div>
+                </div>
+                <div class="col-6 position-relative">
+                  <label class="form-label fw-semibold small text-muted text-uppercase letter-spacing-1">CVC / CVV</label>
+                  <input type="password" class="form-control fs-5 font-monospace" id="ccCvc" placeholder="123" maxlength="4">
+                  <div class="text-danger small mt-1 d-none fw-semibold" id="cvcError">Invalid CVC.</div>
+                </div>
+              </div>
             </div>
+
+            <!-- GPAY TAB -->
+            <div class="tab-pane fade" id="pills-gpay" role="tabpanel" aria-labelledby="gpay-tab">
+              <div class="text-center mb-4">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/f/f2/Google_Pay_Logo.svg" alt="Google Pay" style="height: 30px; margin-bottom: 1rem;">
+                <p class="text-muted small">Enter your UPI ID to receive a payment request on your Google Pay app.</p>
+              </div>
+              <div class="mb-4 position-relative">
+                <label class="form-label fw-semibold small text-muted text-uppercase letter-spacing-1">UPI ID</label>
+                <input type="text" class="form-control fs-5" id="upiId" placeholder="username@okicici">
+                <div class="text-danger small mt-1 d-none fw-semibold" id="upiError">Please enter a valid UPI ID (e.g., name@bank).</div>
+              </div>
+            </div>
+
+            <!-- NET BANKING TAB -->
+            <div class="tab-pane fade" id="pills-netbanking" role="tabpanel" aria-labelledby="netbanking-tab">
+              <p class="text-muted small mb-3">Select your bank from the dropdown to proceed securely.</p>
+              <div class="mb-4 position-relative">
+                <label class="form-label fw-semibold small text-muted text-uppercase letter-spacing-1">Select Bank</label>
+                <select class="form-select fs-5" id="bankSelect">
+                  <option value="" disabled selected>Choose a bank...</option>
+                  <option value="HDFC Bank">HDFC Bank</option>
+                  <option value="State Bank of India">State Bank of India</option>
+                  <option value="ICICI Bank">ICICI Bank</option>
+                  <option value="Axis Bank">Axis Bank</option>
+                  <option value="Kotak Mahindra Bank">Kotak Mahindra Bank</option>
+                </select>
+                <div class="text-danger small mt-1 d-none fw-semibold" id="bankError">Please select a bank.</div>
+              </div>
+            </div>
+            
           </div>
-          <div class="row mb-4">
-            <div class="col-6">
-              <label class="form-label fw-semibold">Expiry</label>
-              <input type="text" class="form-control" placeholder="MM/YY" required maxlength="5">
-            </div>
-            <div class="col-6">
-              <label class="form-label fw-semibold">CVC</label>
-              <input type="password" class="form-control" placeholder="123" required maxlength="3">
-            </div>
-          </div>
-          <button type="submit" class="btn btn-danger w-100 rounded-pill py-2 fw-bold" id="payButton">Pay Now</button>
+
+          <button type="submit" class="btn btn-dark w-100 rounded-pill py-3 fw-bold shadow-sm d-flex justify-content-center align-items-center fs-5" id="payButton" style="background: #111;">
+            <i class="fa-solid fa-lock me-2 fs-6"></i> Pay <span id="btnModalPrice" class="ms-1">₹0</span>
+          </button>
         </form>
       </div>
     </div>
@@ -582,6 +643,7 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById("totalNights").innerText = diffDays;
         document.getElementById("totalPrice").innerText = priceStr;
         document.getElementById("modalPrice").innerText = priceStr;
+        document.getElementById("btnModalPrice").innerText = priceStr;
         const mp = document.getElementById("mobilePrice");
         if(mp) mp.innerText = diffDays + " nights · " + priceStr;
         document.getElementById("reserveBtn").removeAttribute("disabled");
@@ -595,18 +657,139 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   });
 
+  // --- Strict Payment Validations ---
+  const ccNumber = document.getElementById('ccNumber');
+  const ccExpiry = document.getElementById('ccExpiry');
+  const ccCvc = document.getElementById('ccCvc');
+  const cardBrandIcon = document.getElementById('cardBrandIcon');
+
+  ccNumber.addEventListener('input', function(e) {
+    let val = this.value.replace(/\D/g, '');
+    let formatted = val.match(/.{1,4}/g);
+    this.value = formatted ? formatted.join(' ') : '';
+    
+    if(val.startsWith('4')) {
+      cardBrandIcon.innerHTML = '<i class="fa-brands fa-cc-visa text-primary fs-4"></i>';
+    } else if(val.startsWith('5')) {
+      cardBrandIcon.innerHTML = '<i class="fa-brands fa-cc-mastercard text-warning fs-4"></i>';
+    } else if(val.startsWith('3')) {
+      cardBrandIcon.innerHTML = '<i class="fa-brands fa-cc-amex text-info fs-4"></i>';
+    } else {
+      cardBrandIcon.innerHTML = '<i class="fa-regular fa-credit-card text-muted"></i>';
+    }
+    this.classList.remove('is-invalid');
+    document.getElementById('ccError').classList.add('d-none');
+  });
+
+  ccExpiry.addEventListener('input', function(e) {
+    let val = this.value.replace(/\D/g, '');
+    if(val.length >= 2) {
+      this.value = val.substring(0,2) + '/' + val.substring(2,4);
+    } else {
+      this.value = val;
+    }
+    this.classList.remove('is-invalid');
+    document.getElementById('expiryError').classList.add('d-none');
+  });
+
+  ccCvc.addEventListener('input', function(e) {
+    this.value = this.value.replace(/\D/g, '');
+    this.classList.remove('is-invalid');
+    document.getElementById('cvcError').classList.add('d-none');
+  });
+
+  function luhnCheck(num) {
+    let arr = (num + '').split('').reverse().map(x => parseInt(x));
+    let lastDigit = arr.splice(0, 1)[0];
+    let sum = arr.reduce((acc, val, i) => (i % 2 !== 0 ? acc + val : acc + ((val * 2) % 9) || 9), 0);
+    sum += lastDigit;
+    return sum % 10 === 0;
+  }
+
   document.getElementById("mockPaymentForm").addEventListener("submit", function(e) {
     e.preventDefault();
+    let isValid = true;
+    let cardName = "Mock Card";
+    const activeTab = document.querySelector('#paymentTabs .nav-link.active').id;
+    
+    if (activeTab === 'card-tab') {
+      const rawNum = ccNumber.value.replace(/\D/g, '');
+      if(rawNum.length < 15 || rawNum.length > 19 || !luhnCheck(rawNum)) {
+        ccNumber.classList.add('is-invalid');
+        document.getElementById('ccError').classList.remove('d-none');
+        isValid = false;
+      } else {
+        ccNumber.classList.remove('is-invalid');
+        document.getElementById('ccError').classList.add('d-none');
+      }
+
+      const expParts = ccExpiry.value.split('/');
+      if(expParts.length !== 2) {
+        ccExpiry.classList.add('is-invalid');
+        document.getElementById('expiryError').classList.remove('d-none');
+        isValid = false;
+      } else {
+        const month = parseInt(expParts[0]);
+        const year = parseInt('20' + expParts[1]);
+        const now = new Date();
+        const currentMonth = now.getMonth() + 1;
+        const currentYear = now.getFullYear();
+        if(month < 1 || month > 12 || year < currentYear || (year === currentYear && month < currentMonth)) {
+          ccExpiry.classList.add('is-invalid');
+          document.getElementById('expiryError').classList.remove('d-none');
+          isValid = false;
+        } else {
+          ccExpiry.classList.remove('is-invalid');
+          document.getElementById('expiryError').classList.add('d-none');
+        }
+      }
+
+      if(ccCvc.value.length < 3) {
+        ccCvc.classList.add('is-invalid');
+        document.getElementById('cvcError').classList.remove('d-none');
+        isValid = false;
+      } else {
+        ccCvc.classList.remove('is-invalid');
+        document.getElementById('cvcError').classList.add('d-none');
+      }
+      cardName = rawNum ? "Card Ending in " + rawNum.slice(-4) : "Mock Card";
+    } else if (activeTab === 'gpay-tab') {
+      const upiId = document.getElementById('upiId');
+      if(upiId.value.trim() === '' || !upiId.value.includes('@')) {
+        upiId.classList.add('is-invalid');
+        document.getElementById('upiError').classList.remove('d-none');
+        isValid = false;
+      } else {
+        upiId.classList.remove('is-invalid');
+        document.getElementById('upiError').classList.add('d-none');
+        cardName = "GPay (" + upiId.value.trim() + ")";
+      }
+    } else if (activeTab === 'netbanking-tab') {
+      const bankSelect = document.getElementById('bankSelect');
+      if(bankSelect.value === '') {
+        bankSelect.classList.add('is-invalid');
+        document.getElementById('bankError').classList.remove('d-none');
+        isValid = false;
+      } else {
+        bankSelect.classList.remove('is-invalid');
+        document.getElementById('bankError').classList.add('d-none');
+        cardName = "Netbanking (" + bankSelect.value + ")";
+      }
+    }
+
+    if(!isValid) return;
+
+    // Proceed if valid
     const btn = document.getElementById("payButton");
     btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
     btn.setAttribute("disabled","true");
+    
     const bookingDates = document.getElementById("bookingDates")._flatpickr.selectedDates;
     const checkIn  = bookingDates[0] ? bookingDates[0].toISOString().split('T')[0] : "";
     const checkOut = bookingDates[1] ? bookingDates[1].toISOString().split('T')[0] : "";
     const totalNights = document.getElementById("totalNights").innerText;
     const totalPrice  = parseInt(totalNights) * listingPrice;
-    const cardInput   = document.querySelector('input[placeholder="0000 0000 0000 0000"]').value;
-    const cardName    = cardInput ? "Card Ending in " + cardInput.slice(-4) : "Mock Card";
+    
     fetch(`/listings/<%= listing._id %>/book`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -616,13 +799,19 @@ document.addEventListener("DOMContentLoaded", function() {
     .then(data => {
       const modal = bootstrap.Modal.getInstance(document.getElementById('paymentModal'));
       modal.hide();
-      btn.innerHTML = 'Pay Now';
+      btn.innerHTML = '<i class="fa-solid fa-lock me-2 fs-6"></i> Pay <span class="ms-1">₹' + totalPrice.toLocaleString("en-IN") + '</span>';
       btn.removeAttribute("disabled");
       document.getElementById("mockPaymentForm").reset();
       document.getElementById("bookingDates")._flatpickr.clear();
       document.getElementById("totalNights").innerText = "0";
       document.getElementById("totalPrice").innerText = "₹0";
       document.getElementById("reserveBtn").setAttribute("disabled","true");
+      
+      ccNumber.classList.remove('is-valid', 'is-invalid');
+      ccExpiry.classList.remove('is-valid', 'is-invalid');
+      ccCvc.classList.remove('is-valid', 'is-invalid');
+      cardBrandIcon.innerHTML = '<i class="fa-regular fa-credit-card text-muted"></i>';
+
       if(data.success) {
         showSuccessOverlay();
       } else {
@@ -630,7 +819,7 @@ document.addEventListener("DOMContentLoaded", function() {
       }
     })
     .catch(() => {
-      btn.innerHTML = 'Pay Now';
+      btn.innerHTML = '<i class="fa-solid fa-lock me-2 fs-6"></i> Pay <span class="ms-1">₹' + totalPrice.toLocaleString("en-IN") + '</span>';
       btn.removeAttribute("disabled");
       alert("Something went wrong. Please make sure you are logged in.");
     });

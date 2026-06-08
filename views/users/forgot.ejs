@@ -1,25 +1,113 @@
 <% layout("layouts/boilerplate") %>
-<div class="row mt-3">
-  <div class="col-8 offset-2">
-    <h2 class="mb-3 text-center">Forgot Password</h2>
-    <div class="card p-4 shadow-sm border-0 rounded-4">
-      <form action="/forgot" method="POST" class="needs-validation" novalidate>
-        <div class="mb-3">
-          <label for="email" class="form-label">Email Address</label>
-          <input 
-            type="email" 
-            class="form-control" 
-            id="email" 
-            name="email" 
-            placeholder="Enter your email address" 
-            required
-          />
-          <div class="invalid-feedback">
-            Please enter a valid email address.
-          </div>
-        </div>
-        <button class="btn btn-danger btn-lg w-100 mt-2 rounded-pill fw-bold" type="submit">Reset Password</button>
-      </form>
+
+<style>
+/* Fullscreen background breaking out of container */
+.auth-wrapper {
+  margin: -1.5rem calc(-50vw + 50%) -1.5rem;
+  width: 100vw;
+  min-height: calc(100vh - 76px);
+  background: url('https://images.pexels.com/photos/147411/italy-mountains-dawn-daybreak-147411.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&dpr=1') center/cover no-repeat;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+.auth-wrapper::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.4); /* Dark overlay */
+}
+
+/* Glassmorphic Compact Card */
+.auth-glass-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 2.5rem 1.8rem;
+  width: 100%;
+  max-width: 380px; /* Compact width */
+  box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+  animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+[data-bs-theme="dark"] .auth-glass-card {
+  background: rgba(30, 30, 40, 0.85);
+  color: white;
+}
+@keyframes popIn {
+  0% { opacity: 0; transform: scale(0.95) translateY(15px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Compact Forms to fit without scroll */
+.form-floating > .form-control {
+  height: 3.2rem;
+  min-height: 3.2rem;
+  border-radius: 12px;
+  padding-top: 1.2rem;
+  padding-bottom: 0.2rem;
+  font-size: 0.95rem;
+}
+.form-floating > label {
+  padding: 0.6rem 1rem;
+  font-size: 0.9rem;
+}
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label {
+  transform: scale(.8) translateY(-.6rem) translateX(.15rem);
+  color: #6c5ce7;
+}
+.form-control:focus {
+  border-color: #6c5ce7;
+  box-shadow: 0 0 0 3px rgba(108,92,231,0.15);
+}
+
+.btn-compact {
+  padding: 0.6rem;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.btn-compact:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+.auth-icon-header {
+  width: 45px; height: 45px;
+  background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+  color: white;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 1rem;
+  font-size: 1.3rem;
+  box-shadow: 0 4px 15px rgba(108,92,231,0.4);
+}
+</style>
+
+<div class="auth-wrapper">
+  <div class="auth-glass-card">
+    <div class="text-center mb-4">
+      <div class="auth-icon-header"><i class="fa-solid fa-key"></i></div>
+      <h4 class="fw-bold mb-0">Forgot Password?</h4>
+      <p class="text-muted small mb-0 mt-1">Enter email to receive reset link</p>
+    </div>
+
+    <form action="/forgot" method="POST" class="needs-validation" novalidate>
+      <div class="form-floating mb-4">
+        <input type="email" class="form-control" id="email" name="email" placeholder="Email Address" required pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$">
+        <label for="email">Email address</label>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100 btn-compact fw-bold mb-4" style="background: linear-gradient(135deg, #6c5ce7, #a29bfe); border: none;">
+        Reset Password
+      </button>
+    </form>
+
+    <div class="text-center">
+      <a href="/login" class="text-muted fw-bold text-decoration-none" style="font-size: 0.85rem;"><i class="fa-solid fa-arrow-left me-2"></i>Back to Log In</a>
     </div>
   </div>
 </div>

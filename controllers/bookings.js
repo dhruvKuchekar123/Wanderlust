@@ -7,6 +7,21 @@ module.exports.createBooking = async (req, res) => {
   const user = req.user;
 
   try {
+    // Strict server-side validation
+    if (!checkIn || !checkOut || !totalNights || !totalPrice || !cardName) {
+      return res.status(400).json({ success: false, message: "Missing required booking details." });
+    }
+    
+    if (isNaN(totalNights) || Number(totalNights) <= 0 || isNaN(totalPrice) || Number(totalPrice) <= 0) {
+      return res.status(400).json({ success: false, message: "Invalid booking metrics. Please try again." });
+    }
+    
+    const cin = new Date(checkIn);
+    const cout = new Date(checkOut);
+    if (isNaN(cin.getTime()) || isNaN(cout.getTime()) || cin >= cout) {
+      return res.status(400).json({ success: false, message: "Invalid check-in or check-out dates." });
+    }
+
     const listing = await Listing.findById(id);
     if (!listing) {
       return res.status(404).json({ success: false, message: "Listing not found" });

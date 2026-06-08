@@ -10,6 +10,10 @@
 }
 
 /* --- Page Load Fade In --- */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
 body {
   font-family: "Plus Jakarta Sans", sans-serif !important;
   display: flex;

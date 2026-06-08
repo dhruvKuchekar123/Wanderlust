@@ -20,6 +20,7 @@ const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const User = require("./models/user");
 
 // =======================
@@ -101,6 +102,33 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 passport.use(new LocalStrategy(User.authenticate()));
+
+passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: "/auth/google/callback"
+  },
+  async function(accessToken, refreshToken, profile, cb) {
+    try {
+      let user = await User.findOne({ email: profile.emails[0].value });
+      if (!user) {
+        user = new User({
+          googleId: profile.id,
+          username: profile.displayName || profile.emails[0].value.split('@')[0],
+          email: profile.emails[0].value
+        });
+        await user.save();
+      } else if (!user.googleId) {
+        user.googleId = profile.id;
+        await user.save();
+      }
+      return cb(null, user);
+    } catch (err) {
+      return cb(err, null);
+    }
+  }
+));
+
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 

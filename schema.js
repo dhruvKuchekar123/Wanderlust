@@ -42,3 +42,19 @@ module.exports.reviewSchema = JoiExtended.object({
         comment: JoiExtended.string().required().escapeHTML(),
     }).required(),
 });
+
+module.exports.userSchema = JoiExtended.object({
+    username: JoiExtended.string().required().escapeHTML().min(3).max(30).messages({
+        'string.min': 'Username must be at least 3 characters long',
+        'string.max': 'Username cannot exceed 30 characters',
+        'any.required': 'Username is required'
+    }),
+    email: JoiExtended.string().required().email().escapeHTML().messages({
+        'string.email': 'Please enter a valid email address',
+        'any.required': 'Email is required'
+    }),
+    password: JoiExtended.string().required().min(6).escapeHTML().messages({
+        'string.min': 'Password must be at least 6 characters long',
+        'any.required': 'Password is required'
+    })
+});

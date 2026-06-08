@@ -154,3 +154,94 @@ module.exports.resetPassword = async (req, res, next) => {
     res.redirect("/forgot");
   }
 };
+
+module.exports.googleCallback = async (req, res, next) => {
+  try {
+    const user = req.user;
+    
+    // Generate 6 digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    
+    user.otp = otp;
+    user.otpExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
+    await user.save();
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    const mailOptions = {
+      to: user.email,
+      from: process.env.EMAIL_USER,
+      subject: "Your Wanderlust Login OTP",
+      text: `Your One-Time Password for Wanderlust is: ${otp}\nThis OTP is valid for 10 minutes.`
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    // Temporarily log them out since we require OTP verification first
+    req.logout((err) => {
+      if (err) return next(err);
+      
+      req.session.pendingUserId = user._id;
+      req.flash("success", `An OTP has been sent to ${user.email}`);
+      res.redirect("/auth/verify-otp");
+    });
+
+  } catch (err) {
+    req.flash("error", "Something went wrong during Google Auth.");
+    res.redirect("/login");
+  }
+};
+
+module.exports.renderVerifyOtp = (req, res) => {
+  if (!req.session.pendingUserId) {
+    req.flash("error", "No pending login session found. Please login again.");
+    return res.redirect("/login");
+  }
+  res.render("users/verify-otp.ejs");
+};
+
+module.exports.verifyOtp = async (req, res, next) => {
+  try {
+    const { otp } = req.body;
+    const userId = req.session.pendingUserId;
+
+    if (!userId) {
+      req.flash("error", "Session expired. Please login again.");
+      return res.redirect("/login");
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      req.flash("error", "User not found.");
+      return res.redirect("/login");
+    }
+
+    if (user.otp !== otp || user.otpExpires < Date.now()) {
+      req.flash("error", "Invalid or expired OTP.");
+      return res.redirect("/auth/verify-otp");
+    }
+
+    user.otp = undefined;
+    user.otpExpires = undefined;
+    await user.save();
+
+    req.login(user, (err) => {
+      if (err) return next(err);
+      
+      delete req.session.pendingUserId;
+      
+      // Provide the requested popup message functionality via flash
+      req.flash("success", "Successfully logged in!");
+      res.redirect("/listings");
+    });
+  } catch (err) {
+    req.flash("error", "Error verifying OTP.");
+    res.redirect("/auth/verify-otp");
+  }
+};

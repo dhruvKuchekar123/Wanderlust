@@ -107,8 +107,8 @@
         <div class="carousel-item <%= index === 0 ? 'active' : '' %>" data-bs-interval="4000">
           <div style="height: 400px; background-image: url('<%= listing.image.url %>'); background-size: cover; background-position: center;">
             <div class="d-flex h-100 align-items-center justify-content-center" style="background: rgba(0,0,0,0.4);">
-              <div class="text-center text-white">
-                <h1 class="display-4 fw-bold mb-3"><%= listing.title %></h1>
+              <div class="text-center text-white px-3">
+                <h1 class="fw-bold mb-3" style="font-size: clamp(2rem, 6vw, 3.5rem); line-height: 1.2;"><%= listing.title %></h1>
                 <p class="lead mb-4"><i class="fa-solid fa-location-dot me-2"></i><%= listing.location %>, <%= listing.country %></p>
                 <a href="/listings/<%= listing._id %>" class="btn btn-danger btn-lg rounded-pill px-4 fw-bold shadow">Explore Now</a>
               </div>

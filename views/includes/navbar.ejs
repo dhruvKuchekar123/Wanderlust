@@ -39,7 +39,7 @@
           <i class="fa-solid fa-circle-user"></i>
           <span><%= currUser.username %></span>
         </a>
-        <a class="btn btn-sm btn-outline-danger rounded-pill px-3" href="/logout">Log out</a>
+        <a class="btn btn-sm btn-outline-danger rounded-pill px-3" href="/logout" onclick="return confirm('Are you sure you want to log out?');">Log out</a>
       <% } %>
     </div>
 

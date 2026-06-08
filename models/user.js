@@ -12,6 +12,9 @@ const userSchema = new Schema({
         type:String,
         required:true
     },
+    googleId: String,
+    otp: String,
+    otpExpires: Date,
     resetPasswordToken: String,
     resetPasswordExpires: Date
 });

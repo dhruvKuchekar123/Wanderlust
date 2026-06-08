@@ -1,0 +1,70 @@
+<% layout("layouts/boilerplate") %>
+
+<style>
+  .auth-bg {
+    background: linear-gradient(135deg, #00b894 0%, #00cec9 50%, #74b9ff 100%);
+    animation: gradientShift 8s ease infinite alternate;
+    background-size: 200% 200%;
+  }
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+  }
+  .auth-card {
+    max-width: 430px;
+    width: 100%;
+    border-radius: 24px;
+    background: white;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.2);
+    animation: slideUp 0.5s cubic-bezier(0.25,0.8,0.25,1);
+  }
+  [data-bs-theme="dark"] .auth-card { background: #1e1e30; }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .form-control:focus {
+    border-color: #00cec9 !important;
+    box-shadow: 0 0 0 3px rgba(0,206,201,0.15) !important;
+  }
+  .input-animated {
+    transition: border-color 0.25s, box-shadow 0.25s;
+    border-radius: 12px !important;
+    padding: 0.6rem 0.9rem;
+    text-align: center;
+    font-size: 1.5rem;
+    letter-spacing: 0.5rem;
+  }
+  .auth-brand-icon {
+    width: 56px; height: 56px;
+    background: #00cec9;
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1rem;
+    color: white; font-size: 1.5rem;
+    box-shadow: 0 8px 24px rgba(0,206,201,0.4);
+  }
+</style>
+
+<div class="auth-bg d-flex align-items-center justify-content-center min-vh-100 px-3 py-5">
+  <div class="auth-card p-4 p-md-5">
+    <div class="auth-brand-icon"><i class="fa-solid fa-envelope-circle-check"></i></div>
+    <h2 class="text-center fw-bold mb-1">Verify OTP</h2>
+    <p class="text-center text-muted mb-4 small">We've sent a 6-digit code to your email.</p>
+
+    <form action="/auth/verify-otp" method="POST" novalidate>
+      <div class="mb-4">
+        <label for="otp" class="form-label fw-semibold small text-center w-100">Enter OTP</label>
+        <input type="text" name="otp" class="form-control input-animated" id="otp" placeholder="••••••" maxlength="6" required>
+      </div>
+
+      <button class="btn btn-info text-white w-100 rounded-pill fw-bold py-2 mb-3" type="submit" style="background-color: #00cec9; border-color: #00cec9;">
+        Verify & Login <i class="fa-solid fa-check ms-1"></i>
+      </button>
+    </form>
+    
+    <div class="text-center">
+        <a href="/login" class="text-muted text-decoration-none small">Back to Login</a>
+    </div>
+  </div>
+</div>
